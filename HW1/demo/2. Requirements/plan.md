@@ -23,24 +23,28 @@ The application presents a three-column layout:
 ### 1. MICE Card Management
 
 **Card Types**: Four distinct types representing narrative elements:
+
 - **Milieu (M)**: Stories about exploring a place/setting
 - **Inquiry (I)**: Stories driven by seeking answers to questions
 - **Character (C)**: Stories about personal transformation
 - **Event (E)**: Stories about external conflicts/actions
 
 **Card Properties**:
+
 - MICE type indicator (M, I, C, or E)
 - Opening text: What begins this narrative thread (Act 1)
 - Closing text: How this thread resolves (Act 3)
 - Nesting level: Integer 1-4+ indicating structural depth
 
 **Visual Design**:
+
 - Each MICE type has distinct color coding and icon
 - Cards display abbreviated content with tooltips showing full educational details
 - Cards are fixed-height (approximately 200px) and fixed-width (approximately 290px)
 - Opening and closing text are both visible but truncated with ellipsis
 
 **Card Operations**:
+
 - Add new MICE card via form with type selector, opening/closing textareas, and nesting level input
 - Edit existing card inline (replaces card with form)
 - Delete card permanently
@@ -49,12 +53,14 @@ The application presents a three-column layout:
 ### 2. Try/Fail Cycle Management
 
 **Cycle Types**: Four patterns of story progression:
+
 - **Escalation (No, AND)**: Failure that makes things worse
 - **Complication (Yes, BUT)**: Success that creates new problems
 - **Revelation (No, BUT)**: Failure that reveals opportunity
 - **Resolution (Yes, AND)**: Success that builds momentum
 
 **Card Properties**:
+
 - Cycle type indicator
 - Order number (explicit sequencing)
 - Attempt: What the character tries to do
@@ -62,6 +68,7 @@ The application presents a three-column layout:
 - Consequence: The result or what's learned
 
 **Visual Design**:
+
 - Each cycle type has distinct color coding and icon
 - Cards show drag handle (⋮⋮) for reordering
 - Cards display order number prominently
@@ -69,6 +76,7 @@ The application presents a three-column layout:
 - All three fields (Try/Result/Learn) visible but truncated
 
 **Card Operations**:
+
 - Add new Try card via form with type selector and three text fields
 - Edit existing card inline
 - Delete card permanently
@@ -78,12 +86,14 @@ The application presents a three-column layout:
 ### 3. Story Outline Generation & Visualization
 
 **Nesting Structure Diagram**:
+
 - Visual representation showing MICE cards organized by nesting level
 - Nested boxes indicating structural depth (level 1 contains level 2, etc.)
 - Each box shows abbreviated card content with arrows (↓ for opening, ↑ for closing)
 - Automatically updates when MICE cards are added, edited, or deleted
 
 **Story Flow Timeline**:
+
 - Linear three-act view showing narrative progression
 - Act 1: Lists all MICE card openings in nesting order (outside-in: 1→2→3→4)
 - Act 2: Lists all Try/Fail cycles in order with icon, attempt, and outcome
@@ -91,6 +101,7 @@ The application presents a three-column layout:
 - Color-coded sections (green for Act 1, blue for Act 2, purple for Act 3)
 
 **AI-Generated Outline**:
+
 - "Generate Outline" button triggers AI processing
 - Sends all cards to AI service with structured prompt
 - Returns formatted prose outline displayed in dedicated area
@@ -99,6 +110,7 @@ The application presents a three-column layout:
 ### 4. Educational Features
 
 **MICE Theory Panel**:
+
 - Expandable/collapsible panel explaining the MICE Quotient framework
 - Grid display of all four MICE types with:
   - Full name, description, and real-world examples (e.g., "Lord of the Rings" for Milieu)
@@ -107,6 +119,7 @@ The application presents a three-column layout:
 - Try/Fail cycle explanation with all four types, patterns, and examples
 
 **In-Context Help**:
+
 - Tooltips on MICE cards showing detailed type information and examples
 - Tooltips on Try cards showing pattern and example scenario
 - Form fields include helper text guiding content creation
@@ -114,12 +127,14 @@ The application presents a three-column layout:
 ### 5. Data Management & Templates
 
 **Sample Data**:
+
 - "Seed Sample Data" button populates database with example story
 - Sample includes multiple MICE cards at different nesting levels
 - Sample includes 3 Try/Fail cycles demonstrating different types
 - Demonstrates a complete story arc (e.g., child at summer camp overcoming shyness)
 
 **Story Templates**:
+
 - Template modal with pre-built story structures:
   - Mystery Story: I-M-C-E structure with detection-focused Try cycles
   - Adventure Story: M-E-C-I structure with quest-focused Try cycles
@@ -128,6 +143,7 @@ The application presents a three-column layout:
 - Each template includes 4 MICE cards and 3 Try cycles
 
 **Data Reset**:
+
 - "Clear All Data" button with confirmation dialog
 - Removes all cards from database
 - No undo mechanism
@@ -135,6 +151,7 @@ The application presents a three-column layout:
 ### 6. Data Model
 
 **MICE Cards Table** (`mice_cards`):
+
 - `id`: Auto-incrementing primary key
 - `story_id`: Foreign key (currently defaults to 1, multi-story support deferred)
 - `code`: MICE type (M, I, C, or E)
@@ -143,6 +160,7 @@ The application presents a three-column layout:
 - `nesting_level`: Integer indicating structural depth
 
 **Try Cards Table** (`try_cards`):
+
 - `id`: Auto-incrementing primary key
 - `story_id`: Foreign key (currently defaults to 1)
 - `type`: Try/Fail type (full string like "Escalation (No, AND)")
@@ -152,6 +170,7 @@ The application presents a three-column layout:
 - `order_num`: Explicit sequence number
 
 **Persistence Requirements**:
+
 - All card operations (add/edit/delete/reorder) persist immediately to SQLite
 - Database survives server restart
 - No user accounts or authentication
@@ -160,6 +179,7 @@ The application presents a three-column layout:
 ## Interaction Patterns
 
 ### MICE Card Workflow
+
 1. User clicks "Add MICE Card" button
 2. Form appears above existing cards with type selector, two textareas (opening/closing), and nesting level input
 3. User fills form and clicks Save
@@ -167,6 +187,7 @@ The application presents a three-column layout:
 5. Nesting diagram automatically updates
 
 ### Try Card Workflow
+
 1. User clicks "Add Try Card" button
 2. Form appears with cycle type selector, order number input, and three textareas
 3. User fills form and clicks Save
@@ -174,6 +195,7 @@ The application presents a three-column layout:
 5. Story flow timeline automatically updates
 
 ### Drag-and-Drop Workflow
+
 1. User grabs drag handle (⋮⋮) on Try card
 2. Card becomes semi-transparent while dragging
 3. Other cards shift to show drop position
@@ -182,6 +204,7 @@ The application presents a three-column layout:
 6. Story flow timeline automatically updates
 
 ### Edit Card Workflow
+
 1. User clicks "Edit" button on card
 2. Card is replaced by filled-out form
 3. Other cards remain visible
@@ -190,11 +213,13 @@ The application presents a three-column layout:
 6. Relevant visualizations automatically update
 
 ### Delete Card Workflow
+
 1. User clicks "Delete" button
 2. Card immediately disappears (no confirmation for MVP)
 3. Relevant visualizations automatically update
 
 ### Outline Generation Workflow
+
 1. User arranges cards as desired
 2. User clicks "Generate Outline" button
 3. Loading state appears (button disabled or spinner)
