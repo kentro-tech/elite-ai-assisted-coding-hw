@@ -80,8 +80,9 @@ def render_try_card(card: TryCard):
     """Render a single Try/Fail card with attempt, failure, consequence, and controls."""
     return air.Div(
         air.Div(
+            air.Span("⋮⋮", class_="cursor-move mr-2 text-gray-400 hover:text-gray-600", style="font-size: 1.2em;"),
             air.Span(f"{card.type} #{card.order_num}", class_="font-bold tooltip", data_tip=TRY_TOOLTIPS.get(card.type, "")),
-            class_="mb-2"
+            class_="mb-2 flex items-center"
         ),
         air.Div(
             air.Span("Attempt: ", class_="font-bold text-xs"),
@@ -118,7 +119,12 @@ def render_try_card(card: TryCard):
         ),
         class_=f"card border-2 p-3 {TRY_COLORS[card.type]}",
         style="height: auto; max-height: 250px; overflow-auto;",
-        id=f"try-card-{card.id}"
+        id=f"try-card-{card.id}",
+        draggable="true",
+        ondragstart=f"handleDragStart(event, {card.id}, {card.order_num})",
+        ondragover="handleDragOver(event)",
+        ondrop=f"handleDrop(event, {card.id}, {card.order_num})",
+        ondragend="handleDragEnd(event)"
     )
 
 

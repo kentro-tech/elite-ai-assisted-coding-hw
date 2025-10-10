@@ -23,6 +23,48 @@ def story_builder_layout(*children):
                 *body_tags,
                 class_="min-h-screen bg-base-200 p-4"
             ),
+            air.Script("""
+                let draggedCardId = null;
+                let draggedCardOrder = null;
+                
+                function handleDragStart(event, cardId, orderNum) {
+                    draggedCardId = cardId;
+                    draggedCardOrder = orderNum;
+                    event.target.style.opacity = '0.5';
+                }
+                
+                function handleDragOver(event) {
+                    event.preventDefault();
+                    return false;
+                }
+                
+                function handleDrop(event, targetCardId, targetOrderNum) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    if (draggedCardId === targetCardId) {
+                        return false;
+                    }
+                    
+                    // Send HTMX request to reorder
+                    const formData = new FormData();
+                    formData.append('new_order', targetOrderNum);
+                    
+                    fetch(`/try-cards/${draggedCardId}/reorder`, {
+                        method: 'POST',
+                        body: formData
+                    }).then(() => {
+                        // Reload the page to show new order
+                        window.location.reload();
+                    });
+                    
+                    return false;
+                }
+                
+                function handleDragEnd(event) {
+                    event.target.style.opacity = '1';
+                }
+            """),
             data_theme = 'light'
         )
     ).render()

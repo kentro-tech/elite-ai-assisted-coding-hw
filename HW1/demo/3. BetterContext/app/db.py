@@ -57,6 +57,7 @@ def create_try_card(
     consequence: str
 ) -> TryCard:
     """Create a new Try/Fail card and save it to the database."""
+    # Create the new card
     card = TryCard(
         type=type,
         order_num=order_num,
@@ -65,12 +66,59 @@ def create_try_card(
         consequence=consequence
     )
     session.add(card)
+    session.flush()  # Flush to get the card ID but don't commit yet
+    
+    # Get all cards ordered by order_num
+    all_cards = session.exec(select(TryCard).order_by(TryCard.order_num)).all()
+    
+    # Remove the newly created card from the list
+    all_cards = [c for c in all_cards if c.id != card.id]
+    
+    # Insert the card at the desired position (order_num is 1-based)
+    all_cards.insert(order_num - 1, card)
+    
+    # Reassign order numbers sequentially
+    for idx, c in enumerate(all_cards, start=1):
+        c.order_num = idx
+    
     session.commit()
     session.refresh(card)
     return card
 
 
 # ==================== Update Functions ====================
+
+def update_try_card_order(
+    session: Session,  # Database session
+    card_id: int,  # ID of the card to reorder
+    new_order_num: int  # New order number for the card
+) -> bool:
+    """Update the order number of a Try card, shifting other cards as needed."""
+    card = session.get(TryCard, card_id)
+    if not card:
+        return False
+    
+    old_order = card.order_num
+    
+    # If order hasn't changed, nothing to do
+    if old_order == new_order_num:
+        return True
+    
+    # Get all cards to reorder
+    all_cards = session.exec(select(TryCard).order_by(TryCard.order_num)).all()
+    
+    # Remove the card being moved from the list
+    all_cards = [c for c in all_cards if c.id != card_id]
+    
+    # Insert the card at the new position
+    all_cards.insert(new_order_num - 1, card)
+    
+    # Reassign order numbers sequentially
+    for idx, c in enumerate(all_cards, start=1):
+        c.order_num = idx
+    
+    session.commit()
+    return True
 
 def update_mice_card(
     session: Session,
@@ -104,11 +152,29 @@ def update_try_card(
     """Update an existing Try/Fail card."""
     card = session.get(TryCard, card_id)
     if card:
+        old_order = card.order_num
+        
+        # Update the card's content fields
         card.type = type
-        card.order_num = order_num
         card.attempt = attempt
         card.failure = failure
         card.consequence = consequence
+        
+        # If order number changed, reorder all cards
+        if old_order != order_num:
+            # Get all cards ordered by current order_num
+            all_cards = session.exec(select(TryCard).order_by(TryCard.order_num)).all()
+            
+            # Remove the card being moved from the list
+            all_cards = [c for c in all_cards if c.id != card_id]
+            
+            # Insert the card at the new position (order_num is 1-based)
+            all_cards.insert(order_num - 1, card)
+            
+            # Reassign order numbers sequentially
+            for idx, c in enumerate(all_cards, start=1):
+                c.order_num = idx
+        
         session.commit()
         session.refresh(card)
     return card

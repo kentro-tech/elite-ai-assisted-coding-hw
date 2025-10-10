@@ -269,12 +269,20 @@ def update_try_card(
     with Session(engine) as session:
         card = db.update_try_card(session, card_id, type, order_num, attempt, failure, consequence)
         if card:
-            return render_try_card(card).render()
+            # Redirect to refresh the page and show the new order
+            return Response(status_code=200, headers={"HX-Redirect": "/"})
     return ""
 
 @app.delete("/try-cards/{card_id}")
 def delete_try_card(card_id: int):
     with Session(engine) as session:
         db.delete_try_card(session, card_id)
+    return Response(status_code=200, headers={"HX-Redirect": "/"})
+
+@app.post("/try-cards/{card_id}/reorder")
+def reorder_try_card(card_id: int, new_order: int = Form(...)):
+    """Update the order of a Try card after drag and drop."""
+    with Session(engine) as session:
+        db.update_try_card_order(session, card_id, new_order)
     return Response(status_code=200, headers={"HX-Redirect": "/"})
 
