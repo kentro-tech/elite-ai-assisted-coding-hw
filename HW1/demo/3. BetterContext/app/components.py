@@ -46,6 +46,8 @@ def render_mice_card(card: MiceCard):
         )
 
     return air.Div(
+        air.Img(src="/static/placeholder.svg", class_="absolute top-2 right-2 w-12 h-12 rounded-md border border-gray-300 bg-gray-200"),
+        air.Img(src="/static/placeholder.svg", class_="absolute bottom-2 right-2 w-12 h-12 rounded-md border border-gray-300 bg-gray-200"),
         air.Div(
             air.Span(f"{card.code}", class_="text-lg font-bold tooltip tooltip-right", data_tip=MICE_TOOLTIPS.get(card.code, "")),
             air.Span(f" Level {card.nesting_level}", class_="text-sm"),
@@ -70,7 +72,7 @@ def render_mice_card(card: MiceCard):
             ),
             class_="mt-2"
         ),
-        class_=f"card border-2 p-3 {MICE_COLORS[card.code]}",
+        class_=f"card border-2 p-3 {MICE_COLORS[card.code]} relative",
         style="height: auto; min-height: 200px;",
         id=f"mice-card-{card.id}"
     )
@@ -79,6 +81,7 @@ def render_mice_card(card: MiceCard):
 def render_try_card(card: TryCard):
     """Render a single Try/Fail card with attempt, failure, consequence, and controls."""
     return air.Div(
+        air.Img(src="/static/placeholder.svg", class_="absolute top-2 right-2 w-12 h-12 rounded-md border border-gray-300 bg-gray-200"),
         air.Div(
             air.Span("⋮⋮", class_="cursor-move mr-2 text-gray-400 hover:text-gray-600", style="font-size: 1.2em;"),
             air.Span(f"{card.type} #{card.order_num}", class_="font-bold tooltip", data_tip=TRY_TOOLTIPS.get(card.type, "")),
@@ -97,12 +100,12 @@ def render_try_card(card: TryCard):
         air.Div(
             air.Span("Consequence: ", class_="font-bold text-xs"),
             air.Span(card.consequence, class_="text-xs"),
-            class_="mb-2"
+            class_="mb-1"
         ),
         air.Div(
             air.Button(
                 "Edit",
-                class_="btn btn-xs btn-primary mr-2",
+                class_="btn btn-xs btn-primary mr-1",
                 hx_get=f"/try-edit/{card.id}",
                 hx_target=f"#try-card-{card.id}",
                 hx_swap="outerHTML"
@@ -112,14 +115,15 @@ def render_try_card(card: TryCard):
                 class_="btn btn-xs btn-error",
                 hx_delete=f"/try-cards/{card.id}",
                 hx_target="body",
-                hx_swap="outerHTML",
+                hx_swap="innerHTML",
                 hx_confirm="Are you sure you want to delete this Try card?"
             ),
-            class_="flex gap-2"
+            class_="mt-2"
         ),
-        class_=f"card border-2 p-3 {TRY_COLORS[card.type]}",
-        style="height: auto; max-height: 250px; overflow-auto;",
+        class_=f"card border-2 p-3 {TRY_COLORS[card.type]} relative",
+        style="height: 175px;",
         id=f"try-card-{card.id}",
+        data_id=f"{card.id}",
         draggable="true",
         ondragstart=f"handleDragStart(event, {card.id}, {card.order_num})",
         ondragover="handleDragOver(event)",

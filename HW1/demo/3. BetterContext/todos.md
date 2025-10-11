@@ -134,22 +134,22 @@ Each step below adds one complete, testable feature. After each step, you should
 
 ## Step 18: Add database columns for AI-generated icons
 
-- [ ] Add migration or update script to add `act1_icon` column (BLOB, nullable) to `mice_cards` table
-- [ ] Add migration or update script to add `act3_icon` column (BLOB, nullable) to `mice_cards` table
-- [ ] Add migration or update script to add `consequence_icon` column (BLOB, nullable) to `try_cards` table
-- [ ] Update database helper functions to handle the new columns
-- [ ] Verify database schema changes are applied correctly
-- [ ] Test that existing cards still work with the new nullable columns
+- [x] Add migration or update script to add `act1_icon` column (BLOB, nullable) to `mice_cards` table
+- [x] Add migration or update script to add `act3_icon` column (BLOB, nullable) to `mice_cards` table
+- [x] Add migration or update script to add `consequence_icon` column (BLOB, nullable) to `try_cards` table
+- [x] Update database helper functions to handle the new columns
+- [x] Verify database schema changes are applied correctly
+- [x] Test that existing cards still work with the new nullable columns
 
 ## Step 19: Add placeholder icons to all cards
 
-- [ ] Create or select a placeholder icon image (40x40px)
-- [ ] Update MICE card display to show placeholder in top-right corner (Act 1 position)
-- [ ] Update MICE card display to show placeholder in bottom-right corner (Act 3 position)
-- [ ] Update Try card display to show placeholder in center or top-right corner (consequence position)
-- [ ] Add CSS styling for icons: rounded corners, subtle border, proper positioning
-- [ ] Verify all cards display placeholder icons correctly
-- [ ] Test that placeholders don't break existing card layouts
+- [x] Create or select a placeholder icon image (40x40px)
+- [x] Update MICE card display to show placeholder in top-right corner (Act 1 position)
+- [x] Update MICE card display to show placeholder in bottom-right corner (Act 3 position)
+- [x] Update Try card display to show placeholder in center or top-right corner (consequence position)
+- [x] Add CSS styling for icons: rounded corners, subtle border, proper positioning
+- [x] Verify all cards display placeholder icons correctly
+- [x] Test that placeholders don't break existing card layouts
 
 ## Step 20: Set up HuggingFace API integration
 

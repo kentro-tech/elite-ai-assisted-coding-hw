@@ -1,5 +1,6 @@
 import air
 from fastapi import Form, Response
+from fastapi.staticfiles import StaticFiles
 from sqlmodel import SQLModel, Session, create_engine
 from models import MiceCard, TryCard
 from layouts import story_builder_layout
@@ -19,6 +20,7 @@ def init_db():
 init_db()
 
 app = air.Air()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 def _templates_modal():

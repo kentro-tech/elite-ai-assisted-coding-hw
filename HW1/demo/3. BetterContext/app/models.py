@@ -1,4 +1,5 @@
 from sqlmodel import SQLModel, Field
+from typing import Optional
 
 class MiceCard(SQLModel, table=True):
     __tablename__ = "mice_cards"
@@ -9,6 +10,8 @@ class MiceCard(SQLModel, table=True):
     opening: str
     closing: str
     nesting_level: int
+    act1_icon: Optional[bytes] = Field(default=None, nullable=True)  # AI-generated icon for Act 1 (opening)
+    act3_icon: Optional[bytes] = Field(default=None, nullable=True)  # AI-generated icon for Act 3 (closing)
 
 class TryCard(SQLModel, table=True):
     __tablename__ = "try_cards"
@@ -20,3 +23,4 @@ class TryCard(SQLModel, table=True):
     failure: str
     consequence: str
     order_num: int
+    consequence_icon: Optional[bytes] = Field(default=None, nullable=True)  # AI-generated icon for consequence
