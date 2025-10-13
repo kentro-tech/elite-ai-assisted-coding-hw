@@ -22,6 +22,9 @@ TEXT_XL_BOLD_MB3 = "text-xl font-bold mb-3"
 TEXT_LG_SEMIBOLD_MB2 = "text-lg font-semibold mb-2"
 TEXT_LG_SEMIBOLD_MB2_MT6 = "text-lg font-semibold mb-2 mt-6"
 TEXT_SM = "text-sm"
+TEXT_SM_MB1 = "text-sm mb-1"
+TEXT_XS_ITALIC_GRAY = "text-xs italic text-gray-600"
+TEXT_GRAY_ITALIC_SM = "text-gray-500 italic text-sm"
 
 # Form styles
 FORM_CONTROL = "form-control"
@@ -41,7 +44,10 @@ MODAL = "modal"
 
 # Layout styles
 GRID_3_COL_GAP4 = "grid grid-cols-3 gap-4 w-full"
+GRID_2_COL_GAP3_MB4 = "grid grid-cols-2 gap-3 mb-4"
 FLEX_COL_GAP3 = "flex flex-col gap-3"
+LIST_DISC_INSIDE_SPACED = "list-disc list-inside space-y-1"
 MB_4 = "mb-4"
 MB_3 = "mb-3"
 MB_2 = "mb-2"
+
