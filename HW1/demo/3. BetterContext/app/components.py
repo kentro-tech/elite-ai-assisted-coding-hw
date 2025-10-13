@@ -44,10 +44,80 @@ def render_mice_card(card: MiceCard):
             air.Span(text),
             class_=f"mb-2 text-sm {extra_class}"
         )
+    
+    def create_icon_element(icon_data: bytes | None, icon_type: str, position_class: str):
+        """Create icon element for Act 1 (top) or Act 3 (bottom).
+        
+        Args:
+            icon_data: The icon image bytes from database
+            icon_type: Either 'act1' or 'act3'
+            position_class: CSS class for positioning ('top-2' or 'bottom-2')
+        """
+        # Check if we have the loading icon
+        is_loading_icon = False
+        if icon_data:
+            try:
+                with open("static/loading-icon.png", 'rb') as f:
+                    loading_icon_bytes = f.read()
+                is_loading_icon = (icon_data == loading_icon_bytes)
+            except FileNotFoundError:
+                pass
+        
+        # Determine which icon to show - MICE cards are ~2x bigger (100px vs 48px original)
+        if icon_data:
+            if is_loading_icon:
+                # Show loading message
+                return air.Div(
+                    air.Div(
+                        air.Span("🖼️", class_="text-2xl mb-1"),
+                        air.Div("Image", class_="text-xs font-bold"),
+                        air.Div("Generating", class_="text-xs font-bold"),
+                        air.Div("Refresh", class_="text-xs mt-1"),
+                        air.Div("in 30s", class_="text-xs"),
+                        class_="flex flex-col items-center justify-center text-center"
+                    ),
+                    class_=f"absolute {position_class} right-2 rounded-md border-2 border-blue-400 bg-blue-50 flex items-center justify-center",
+                    style="width: 100px; height: 100px;",
+                    id=f"mice-icon-{icon_type}-{card.id}"
+                )
+            else:
+                # Show the real generated icon (clickable to regenerate)
+                return air.Div(
+                    air.Img(
+                        src=f"/api/mice-card-icon/{card.id}/{icon_type}",
+                        class_="w-full h-full object-cover"
+                    ),
+                    class_=f"absolute {position_class} right-2 rounded-md border border-gray-300 cursor-pointer hover:border-blue-400 transition-colors",
+                    style="width: 100px; height: 100px;",
+                    id=f"mice-icon-{icon_type}-{card.id}",
+                    title="Click to regenerate icon",
+                    hx_post=f"/api/mice-card-icon/{card.id}/generate",
+                    hx_target=f"#mice-card-{card.id}",
+                    hx_swap="outerHTML"
+                )
+        else:
+            # Show clickable placeholder to generate icon
+            return air.Div(
+                air.Img(
+                    src="/static/placeholder.svg",
+                    class_="w-full h-full object-cover"
+                ),
+                class_=f"absolute {position_class} right-2 rounded-md border border-gray-300 bg-gray-200 cursor-pointer hover:bg-gray-300 hover:border-blue-400 transition-colors flex items-center justify-center",
+                title="Click to generate icon",
+                hx_post=f"/api/mice-card-icon/{card.id}/generate",
+                hx_target=f"#mice-card-{card.id}",
+                hx_swap="outerHTML",
+                style="width: 100px; height: 100px;",
+                id=f"mice-icon-{icon_type}-{card.id}"
+            )
+    
+    # Create Act 1 (top) and Act 3 (bottom) icon elements
+    act1_icon = create_icon_element(card.act1_icon, "act1", "top-2")
+    act3_icon = create_icon_element(card.act3_icon, "act3", "bottom-2")
 
     return air.Div(
-        air.Img(src="/static/placeholder.svg", class_="absolute top-2 right-2 w-12 h-12 rounded-md border border-gray-300 bg-gray-200"),
-        air.Img(src="/static/placeholder.svg", class_="absolute bottom-2 right-2 w-12 h-12 rounded-md border border-gray-300 bg-gray-200"),
+        act1_icon,
+        act3_icon,
         air.Div(
             air.Span(f"{card.code}", class_="text-lg font-bold tooltip tooltip-right", data_tip=MICE_TOOLTIPS.get(card.code, "")),
             air.Span(f" Level {card.nesting_level}", class_="text-sm"),
@@ -73,7 +143,7 @@ def render_mice_card(card: MiceCard):
             class_="mt-2"
         ),
         class_=f"card border-2 p-3 {MICE_COLORS[card.code]} relative",
-        style="height: auto; min-height: 200px;",
+        style="height: auto; min-height: 220px;",
         id=f"mice-card-{card.id}"
     )
 

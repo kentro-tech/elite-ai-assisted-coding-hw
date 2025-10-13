@@ -192,6 +192,41 @@ def _generate_try_card_icon(card_id: int, consequence_text: str):
         print(f"❌ Error generating icon for Try card {card_id}: {e}")
 
 
+def _generate_mice_card_icons(card_id: int, opening_text: str, closing_text: str):
+    """Background task to generate icons for a MICE card (both Act 1 and Act 3)."""
+    try:
+        # Generate Act 1 icon from opening text
+        act1_prompt = hf_api.generate_image_prompt(opening_text, context="story opening")
+        act1_image_bytes = hf_api.generate_icon_image(act1_prompt)
+        
+        if act1_image_bytes:
+            with Session(engine) as session:
+                card = db.get_mice_card(session, card_id)
+                if card:
+                    card.act1_icon = act1_image_bytes
+                    session.commit()
+                    print(f"✅ Generated Act 1 icon for MICE card {card_id}")
+        else:
+            print(f"⚠️ Failed to generate Act 1 icon for MICE card {card_id}: No image data returned")
+        
+        # Generate Act 3 icon from closing text
+        act3_prompt = hf_api.generate_image_prompt(closing_text, context="story closing")
+        act3_image_bytes = hf_api.generate_icon_image(act3_prompt)
+        
+        if act3_image_bytes:
+            with Session(engine) as session:
+                card = db.get_mice_card(session, card_id)
+                if card:
+                    card.act3_icon = act3_image_bytes
+                    session.commit()
+                    print(f"✅ Generated Act 3 icon for MICE card {card_id}")
+        else:
+            print(f"⚠️ Failed to generate Act 3 icon for MICE card {card_id}: No image data returned")
+            
+    except Exception as e:
+        print(f"❌ Error generating icons for MICE card {card_id}: {e}")
+
+
 @app.post("/try-cards")
 def create_try_card(
     background_tasks: BackgroundTasks,
@@ -232,8 +267,106 @@ def load_template(template_name: str, background_tasks: BackgroundTasks):
         try_cards = db.get_all_try_cards(session)
         for card in try_cards:
             background_tasks.add_task(_generate_try_card_icon, card.id, card.consequence)
+        
+        # Trigger icon generation for all MICE cards
+        mice_cards = db.get_all_mice_cards(session)
+        for card in mice_cards:
+            background_tasks.add_task(_generate_mice_card_icons, card.id, card.opening, card.closing)
 
     return Response(status_code=200, headers={"HX-Redirect": "/"})
+
+@app.get("/api/mice-card-icon/{card_id}/{icon_type}")
+def get_mice_card_icon(card_id: int, icon_type: str):
+    """Serve the generated icon image for a MICE card from the database.
+    
+    Args:
+        card_id: The ID of the MICE card
+        icon_type: Either 'act1' or 'act3'
+    """
+    with Session(engine) as session:
+        card = db.get_mice_card(session, card_id)
+        if card:
+            if icon_type == "act1" and card.act1_icon:
+                return Response(content=card.act1_icon, media_type="image/png")
+            elif icon_type == "act3" and card.act3_icon:
+                return Response(content=card.act3_icon, media_type="image/png")
+        # Return 404 if card or icon doesn't exist
+        return Response(status_code=404)
+
+
+@app.get("/api/mice-card-icon-element/{card_id}/{icon_type}")
+def get_mice_card_icon_element(card_id: int, icon_type: str):
+    """Return just the icon IMG element for polling updates.
+    
+    Args:
+        card_id: The ID of the MICE card
+        icon_type: Either 'act1' or 'act3'
+    """
+    with Session(engine) as session:
+        card = db.get_mice_card(session, card_id)
+        if not card:
+            return Response(status_code=404)
+        
+        # Get the appropriate icon based on type
+        icon_data = card.act1_icon if icon_type == "act1" else card.act3_icon
+        
+        # Check if it's the loading icon
+        is_loading_icon = False
+        if icon_data:
+            try:
+                with open("static/loading-icon.png", 'rb') as f:
+                    loading_icon_bytes = f.read()
+                is_loading_icon = (icon_data == loading_icon_bytes)
+            except FileNotFoundError:
+                pass
+        
+        # Build icon attributes - MICE cards are ~2x bigger than original placeholders (100px vs 48px)
+        position_class = "top-2" if icon_type == "act1" else "bottom-2"
+        icon_attrs = {
+            "src": f"/api/mice-card-icon/{card.id}/{icon_type}",
+            "class_": f"absolute {position_class} right-2 rounded-md border border-gray-300 object-cover",
+            "alt": f"{icon_type.upper()} Icon",
+            "style": "width: 100px; height: 100px;",
+            "id": f"mice-icon-{icon_type}-{card.id}"
+        }
+        
+        # If still loading, keep polling
+        if is_loading_icon:
+            icon_attrs["hx_get"] = f"/api/mice-card-icon-element/{card.id}/{icon_type}"
+            icon_attrs["hx_trigger"] = "every 2s"
+            icon_attrs["hx_swap"] = "outerHTML"
+            print(f"🔄 Still loading {icon_type} icon, continuing to poll MICE card {card.id}")
+        else:
+            print(f"✅ Real {icon_type} icon ready for MICE card {card.id}, stopping poll")
+        
+        return air.Img(**icon_attrs)
+
+
+@app.post("/api/mice-card-icon/{card_id}/generate")
+def generate_mice_card_icons_endpoint(card_id: int, background_tasks: BackgroundTasks):
+    """Manually trigger icon generation for a MICE card."""
+    with Session(engine) as session:
+        card = db.get_mice_card(session, card_id)
+        if card:
+            # Read the loading icon placeholder and save it immediately for both icons
+            loading_icon_path = "static/loading-icon.png"
+            try:
+                with open(loading_icon_path, 'rb') as f:
+                    loading_icon_bytes = f.read()
+                card.act1_icon = loading_icon_bytes
+                card.act3_icon = loading_icon_bytes
+                session.commit()
+                session.refresh(card)
+            except FileNotFoundError:
+                print(f"⚠️ Loading icon not found at {loading_icon_path}")
+            
+            # Trigger async icon generation (will overwrite the loading icons)
+            background_tasks.add_task(_generate_mice_card_icons, card.id, card.opening, card.closing)
+            # Return the card with the loading icons
+            return render_mice_card(card)
+        else:
+            return Response(status_code=404)
+
 
 @app.get("/mice-edit/{card_id}")
 def mice_edit(card_id: int):
@@ -253,6 +386,7 @@ def mice_card(card_id: int):
 
 @app.put("/mice-cards/{card_id}")
 def update_mice_card(
+    background_tasks: BackgroundTasks,
     card_id: int,
     code: str = Form(...),
     opening: str = Form(...),
@@ -260,9 +394,33 @@ def update_mice_card(
     nesting_level: int = Form(...)
 ):
     with Session(engine) as session:
+        # Get the old card to check if text changed
+        old_card = db.get_mice_card(session, card_id)
+        opening_changed = old_card.opening != opening
+        closing_changed = old_card.closing != closing
+        
+        # Update the card
         card = db.update_mice_card(session, card_id, code, opening, closing, nesting_level)
         if not card:
             return ""
+        
+        # If text changed, regenerate icons
+        if opening_changed or closing_changed:
+            # Set loading icons immediately
+            loading_icon_path = "static/loading-icon.png"
+            try:
+                with open(loading_icon_path, 'rb') as f:
+                    loading_icon_bytes = f.read()
+                if opening_changed:
+                    card.act1_icon = loading_icon_bytes
+                if closing_changed:
+                    card.act3_icon = loading_icon_bytes
+                session.commit()
+            except FileNotFoundError:
+                print(f"⚠️ Loading icon not found at {loading_icon_path}")
+            
+            # Trigger async icon generation
+            background_tasks.add_task(_generate_mice_card_icons, card_id, opening, closing)
 
     return Response(status_code=200, headers={"HX-Redirect": "/"})
 
@@ -274,13 +432,17 @@ def delete_mice_card(card_id: int):
 
 @app.post("/mice-cards")
 def create_mice_card(
+    background_tasks: BackgroundTasks,
     code: str = Form(...),
     opening: str = Form(...),
     closing: str = Form(...),
     nesting_level: int = Form(...)
 ):
     with Session(engine) as session:
-        db.create_mice_card(session, code, opening, closing, nesting_level)
+        card = db.create_mice_card(session, code, opening, closing, nesting_level)
+        
+        # Trigger async icon generation for both Act 1 and Act 3
+        background_tasks.add_task(_generate_mice_card_icons, card.id, opening, closing)
 
     return Response(status_code=200, headers={"HX-Redirect": "/"})
 
