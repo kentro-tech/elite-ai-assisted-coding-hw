@@ -7,6 +7,11 @@ from templates import TEMPLATES
 from components import render_mice_card, render_try_card, render_nesting_diagram, render_story_timeline, render_mice_help_panel
 import db
 from forms import mice_card_form, try_card_form
+from styles import (
+    BTN_TEMPLATE_CARD, BTN_PRIMARY, BTN_INFO_MR, BTN_ERROR, BTN_GHOST_MT,
+    TEXT_2XL_BOLD_MB4, TEXT_XL_BOLD_MB2, TEXT_LG_SEMIBOLD_MB2, TEXT_LG_SEMIBOLD_MB2_MT6, TEXT_SM,
+    BORDER_BASE_P4, MODAL_BOX, MODAL, GRID_3_COL_GAP4, FLEX_COL_GAP3, MB_4
+)
 
 # Database setup
 DATABASE_URL = "sqlite:///story_builder.db"
@@ -25,31 +30,31 @@ def _templates_modal():
     """Render the story templates selection modal dialog."""
     return air.Dialog(
         air.Div(
-            air.H3("Story Templates", class_="text-2xl font-bold mb-4"),
-            air.P("Choose a template to get started with a pre-built story structure:", class_="mb-4"),
+            air.H3("Story Templates", class_=TEXT_2XL_BOLD_MB4),
+            air.P("Choose a template to get started with a pre-built story structure:", class_=MB_4),
             air.Div(
                 air.Button(
-                    air.H4("🔍 Mystery", class_="text-xl font-bold mb-2"),
-                    air.P("A detective investigates a murder in a small town", class_="text-sm"),
-                    class_="btn btn-outline w-full text-left h-auto py-4 mb-3",
+                    air.H4("🔍 Mystery", class_=TEXT_XL_BOLD_MB2),
+                    air.P("A detective investigates a murder in a small town", class_=TEXT_SM),
+                    class_=BTN_TEMPLATE_CARD,
                     hx_post="/load-template/mystery",
                     hx_target="body",
                     hx_swap="outerHTML",
                     onclick="document.getElementById('templates-modal').close()"
                 ),
                 air.Button(
-                    air.H4("🗺️ Adventure", class_="text-xl font-bold mb-2"),
-                    air.P("A hero embarks on a quest to save their homeland", class_="text-sm"),
-                    class_="btn btn-outline w-full text-left h-auto py-4 mb-3",
+                    air.H4("🗺️ Adventure", class_=TEXT_XL_BOLD_MB2),
+                    air.P("A hero embarks on a quest to save their homeland", class_=TEXT_SM),
+                    class_=BTN_TEMPLATE_CARD,
                     hx_post="/load-template/adventure",
                     hx_target="body",
                     hx_swap="outerHTML",
                     onclick="document.getElementById('templates-modal').close()"
                 ),
                 air.Button(
-                    air.H4("💕 Romance", class_="text-xl font-bold mb-2"),
-                    air.P("Two people find love against all odds", class_="text-sm"),
-                    class_="btn btn-outline w-full text-left h-auto py-4 mb-3",
+                    air.H4("💕 Romance", class_=TEXT_XL_BOLD_MB2),
+                    air.P("Two people find love against all odds", class_=TEXT_SM),
+                    class_=BTN_TEMPLATE_CARD,
                     hx_post="/load-template/romance",
                     hx_target="body",
                     hx_swap="outerHTML",
@@ -58,13 +63,13 @@ def _templates_modal():
             ),
             air.Button(
                 "Cancel",
-                class_="btn btn-ghost mt-2",
+                class_=BTN_GHOST_MT,
                 onclick="document.getElementById('templates-modal').close()"
             ),
-            class_="modal-box"
+            class_=MODAL_BOX
         ),
         id="templates-modal",
-        class_="modal"
+        class_=MODAL
     )
 
 
@@ -79,27 +84,27 @@ def index():
             air.Div(
                 air.Button(
                     "Templates",
-                    class_="btn btn-info mr-2",
+                    class_=BTN_INFO_MR,
                     onclick="document.getElementById('templates-modal').showModal()"
                 ),
                 air.Button(
                     "Clear All Data",
-                    class_="btn btn-error",
+                    class_=BTN_ERROR,
                     hx_post="/clear-data",
                     hx_target="body",
                     hx_swap="outerHTML",
                     hx_confirm="Are you sure you want to delete all cards? This cannot be undone."
                 ),
-                class_="mb-4"
+                class_=MB_4
             ),
             _templates_modal(),
             render_mice_help_panel(),
             air.Div(
                 air.Div(
-                    air.H2("MICE Cards", class_="text-2xl font-bold mb-4"),
+                    air.H2("MICE Cards", class_=TEXT_2XL_BOLD_MB4),
                     air.Button(
                         "Add MICE Card",
-                        class_="btn btn-primary mb-3",
+                        class_=BTN_PRIMARY,
                         hx_get="/mice-form",
                         hx_target="#mice-form-container",
                         hx_swap="innerHTML"
@@ -107,16 +112,16 @@ def index():
                     air.Div(id="mice-form-container"),
                     air.Div(
                         *[render_mice_card(card) for card in mice_cards],
-                        class_="flex flex-col gap-3",
+                        class_=FLEX_COL_GAP3,
                         id="mice-cards-list"
                     ),
-                    class_="border border-base-300 p-4"
+                    class_=BORDER_BASE_P4
                 ),
                 air.Div(
-                    air.H2("Try/Fail Cycles", class_="text-2xl font-bold mb-4"),
+                    air.H2("Try/Fail Cycles", class_=TEXT_2XL_BOLD_MB4),
                     air.Button(
                         "Add Try Card",
-                        class_="btn btn-primary mb-3",
+                        class_=BTN_PRIMARY,
                         hx_get="/try-form",
                         hx_target="#try-form-container",
                         hx_swap="innerHTML"
@@ -124,20 +129,20 @@ def index():
                     air.Div(id="try-form-container"),
                     air.Div(
                         *[render_try_card(card) for card in try_cards],
-                        class_="flex flex-col gap-3",
+                        class_=FLEX_COL_GAP3,
                         id="try-cards-list"
                     ),
-                    class_="border border-base-300 p-4"
+                    class_=BORDER_BASE_P4
                 ),
                 air.Div(
-                    air.H2("Generated Outline", class_="text-2xl font-bold mb-4"),
-                    air.H3("Nesting Structure", class_="text-lg font-semibold mb-2"),
+                    air.H2("Generated Outline", class_=TEXT_2XL_BOLD_MB4),
+                    air.H3("Nesting Structure", class_=TEXT_LG_SEMIBOLD_MB2),
                     render_nesting_diagram(mice_cards),
-                    air.H3("Story Timeline", class_="text-lg font-semibold mb-2 mt-6"),
+                    air.H3("Story Timeline", class_=TEXT_LG_SEMIBOLD_MB2_MT6),
                     render_story_timeline(mice_cards, try_cards),
-                    class_="border border-base-300 p-4"
+                    class_=BORDER_BASE_P4
                 ),
-                class_="grid grid-cols-3 gap-4 w-full"
+                class_=GRID_3_COL_GAP4
             )
         )
 
