@@ -162,19 +162,32 @@ Each step below adds one complete, testable feature. After each step, you should
 - [x] Verify generated images can be retrieved and stored as BLOBs
 - [x] Added Pillow dependency for image processing
 - [x] Documented that text-to-image requires HuggingFace Pro subscription or credits
+- [x] Implemented dual API mode support:
+  - [x] Added Gradio API integration for free image generation (uses public HF Spaces)
+  - [x] Added gradio-client dependency
+  - [x] Created USE_GRADIO_API environment variable to switch between modes
+  - [x] Updated test endpoint to show which API mode is active
+  - [x] Added "Test HuggingFace Connection" button to main page using HTMX
+  - [x] Enhanced test page with live status updates and clear API mode indicator
+  - [x] Updated documentation to explain both API modes (Gradio free vs Inference paid)
+  - [x] Configured Gradio API as default for testing (USE_GRADIO_API=true)
 
 ## Step 21: Add icon generation for Try cards
 
-- [ ] Create endpoint to serve images from database BLOBs (e.g., `/api/try-card-icon/<id>`)
-- [ ] Update Try card POST endpoint to trigger async icon generation after saving:
-  - [ ] Generate prompt from consequence text
-  - [ ] Call HuggingFace API to generate image
-  - [ ] Save image BLOB to database
-- [ ] Update Try card display to show generated icon instead of placeholder when available
-- [ ] Add loading/generation status indicator on cards during generation
-- [ ] Update Try card PUT endpoint to regenerate icon when consequence text changes
-- [ ] Test creating new Try cards and verify icons generate and display
-- [ ] Test editing Try cards and verify icons update
+- [x] Create endpoint to serve images from database BLOBs (e.g., `/api/try-card-icon/<id>`)
+- [x] Update Try card POST endpoint to trigger async icon generation after saving:
+  - [x] Generate prompt from consequence text
+  - [x] Call HuggingFace API to generate image
+  - [x] Save image BLOB to database
+- [x] Update Try card display to show generated icon instead of placeholder when available
+- [x] Update Try card PUT endpoint to regenerate icon when consequence text changes
+- [x] Added automatic icon generation when loading templates
+- [x] Made placeholder icon clickable to manually trigger icon generation
+- [x] Added clear "Image Generating" message with refresh instruction
+- [x] Made generated icons clickable to regenerate
+- [x] Added loading icon display when editing consequence text
+- [x] Test creating new Try cards and verify icons generate and display
+- [x] Test editing Try cards and verify icons update
 
 ## Step 22: Add icon generation for MICE cards
 

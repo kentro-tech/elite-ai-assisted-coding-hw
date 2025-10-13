@@ -80,8 +80,81 @@ def render_mice_card(card: MiceCard):
 
 def render_try_card(card: TryCard):
     """Render a single Try/Fail card with attempt, failure, consequence, and controls."""
+    # Check if we have the loading icon
+    is_loading_icon = False
+    if card.consequence_icon:
+        try:
+            with open("static/loading-icon.png", 'rb') as f:
+                loading_icon_bytes = f.read()
+            is_loading_icon = (card.consequence_icon == loading_icon_bytes)
+        except FileNotFoundError:
+            pass
+    
+    # Determine which icon to show
+    if card.consequence_icon:
+        # Check if it's the loading icon - if so, show a message instead
+        if is_loading_icon:
+            icon_element = air.Div(
+                air.Div(
+                    air.Span("🖼️", class_="text-3xl mb-1"),
+                    air.Div("Image", class_="text-xs font-bold"),
+                    air.Div("Generating", class_="text-xs font-bold"),
+                    air.Div("Refresh page", class_="text-xs mt-1"),
+                    air.Div("in 30 seconds", class_="text-xs"),
+                    class_="flex flex-col items-center justify-center text-center"
+                ),
+                class_="absolute top-2 right-2 rounded-md border-2 border-blue-400 bg-blue-50 flex items-center justify-center",
+                style="width: 120px; height: 120px;",
+                id=f"try-icon-{card.id}"
+            )
+        else:
+            # Show the real generated icon (clickable to regenerate)
+            icon_element = air.Div(
+                air.Img(
+                    src=f"/api/try-card-icon/{card.id}",
+                    class_="w-full h-full object-cover"
+                ),
+                class_="absolute top-2 right-2 rounded-md border border-gray-300 cursor-pointer hover:border-blue-400 transition-colors",
+                style="width: 120px; height: 120px;",
+                id=f"try-icon-{card.id}",
+                title="Click to regenerate icon",
+                hx_post=f"/api/try-card-icon/{card.id}/generate",
+                hx_target=f"#try-card-{card.id}",
+                hx_swap="outerHTML"
+            )
+    else:
+        # Show clickable placeholder to generate icon
+        icon_element = air.Div(
+            air.Img(
+                src="/static/placeholder.svg",
+                class_="w-full h-full object-cover"
+            ),
+            class_="absolute top-2 right-2 rounded-md border border-gray-300 bg-gray-200 cursor-pointer hover:bg-gray-300 hover:border-blue-400 transition-colors flex items-center justify-center",
+            title="Click to generate icon",
+            hx_post=f"/api/try-card-icon/{card.id}/generate",
+            hx_target=f"#try-card-{card.id}",
+            hx_swap="outerHTML",
+            style="width: 120px; height: 120px;",
+            id=f"try-icon-{card.id}"
+        )
+    
+    # Build attributes dict for the card container
+    card_attrs = {
+        "class_": f"card border-2 p-3 {TRY_COLORS[card.type]} relative",
+        "style": "height: 175px;",
+        "id": f"try-card-{card.id}",
+        "data_id": f"{card.id}",
+        "draggable": "true",
+        "ondragstart": f"handleDragStart(event, {card.id}, {card.order_num})",
+        "ondragover": "handleDragOver(event)",
+        "ondrop": f"handleDrop(event, {card.id}, {card.order_num})",
+        "ondragend": "handleDragEnd(event)"
+    }
+    
+    # Polling is now handled on the icon element itself, not the card
+    
     return air.Div(
-        air.Img(src="/static/placeholder.svg", class_="absolute top-2 right-2 w-12 h-12 rounded-md border border-gray-300 bg-gray-200"),
+        icon_element,
         air.Div(
             air.Span("⋮⋮", class_="cursor-move mr-2 text-gray-400 hover:text-gray-600", style="font-size: 1.2em;"),
             air.Span(f"{card.type} #{card.order_num}", class_="font-bold tooltip", data_tip=TRY_TOOLTIPS.get(card.type, "")),
@@ -120,15 +193,7 @@ def render_try_card(card: TryCard):
             ),
             class_="mt-2"
         ),
-        class_=f"card border-2 p-3 {TRY_COLORS[card.type]} relative",
-        style="height: 175px;",
-        id=f"try-card-{card.id}",
-        data_id=f"{card.id}",
-        draggable="true",
-        ondragstart=f"handleDragStart(event, {card.id}, {card.order_num})",
-        ondragover="handleDragOver(event)",
-        ondrop=f"handleDrop(event, {card.id}, {card.order_num})",
-        ondragend="handleDragEnd(event)"
+        **card_attrs
     )
 
 

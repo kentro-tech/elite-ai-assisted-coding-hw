@@ -1,5 +1,5 @@
 import air
-from fastapi import Form, Response
+from fastapi import Form, Response, BackgroundTasks
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import SQLModel, Session, create_engine
 from models import MiceCard, TryCard
@@ -168,8 +168,33 @@ def try_form():
 def clear_try_form():
     return ""
 
+def _generate_try_card_icon(card_id: int, consequence_text: str):
+    """Background task to generate icon for a Try card."""
+    try:
+        # Generate prompt from consequence text
+        prompt = hf_api.generate_image_prompt(consequence_text, context="story consequence")
+        
+        # Generate the image
+        image_bytes = hf_api.generate_icon_image(prompt)
+        
+        if image_bytes:
+            # Save to database (overwrites the loading placeholder)
+            with Session(engine) as session:
+                card = db.get_try_card(session, card_id)
+                if card:
+                    card.consequence_icon = image_bytes
+                    session.commit()
+                    print(f"✅ Generated icon for Try card {card_id}")
+        else:
+            print(f"⚠️ Failed to generate icon for Try card {card_id}: No image data returned")
+            
+    except Exception as e:
+        print(f"❌ Error generating icon for Try card {card_id}: {e}")
+
+
 @app.post("/try-cards")
 def create_try_card(
+    background_tasks: BackgroundTasks,
     type: str = Form(...),
     order_num: int = Form(...),
     attempt: str = Form(...),
@@ -177,7 +202,10 @@ def create_try_card(
     consequence: str = Form(...)
 ):
     with Session(engine) as session:
-        db.create_try_card(session, type, order_num, attempt, failure, consequence)
+        card = db.create_try_card(session, type, order_num, attempt, failure, consequence)
+        
+        # Trigger async icon generation
+        background_tasks.add_task(_generate_try_card_icon, card.id, consequence)
 
     return Response(status_code=200, headers={"HX-Redirect": "/"})
 
@@ -190,7 +218,7 @@ def clear_data():
     return Response(status_code=200, headers={"HX-Redirect": "/"})
 
 @app.post("/load-template/{template_name}")
-def load_template(template_name: str):
+def load_template(template_name: str, background_tasks: BackgroundTasks):
     """Load a story template from templates.py into the database."""
     if template_name not in TEMPLATES:
         return Response(status_code=404, content=f"Template '{template_name}' not found")
@@ -199,6 +227,11 @@ def load_template(template_name: str):
 
     with Session(engine) as session:
         db.load_template_data(session, template["mice_cards"], template["try_cards"])
+        
+        # Trigger icon generation for all Try cards
+        try_cards = db.get_all_try_cards(session)
+        for card in try_cards:
+            background_tasks.add_task(_generate_try_card_icon, card.id, card.consequence)
 
     return Response(status_code=200, headers={"HX-Redirect": "/"})
 
@@ -267,9 +300,20 @@ def get_try_card(card_id: int):
             return ""
         return render_try_card(card)
 
+
+@app.get("/try-cards/{card_id}")
+def get_try_card_by_id(card_id: int):
+    """Get a single Try card by ID (used for polling during icon generation)."""
+    with Session(engine) as session:
+        card = db.get_try_card(session, card_id)
+        if not card:
+            return ""
+        return render_try_card(card)
+
 @app.put("/try-cards/{card_id}")
 def update_try_card(
     card_id: int,
+    background_tasks: BackgroundTasks,
     type: str = Form(...),
     order_num: int = Form(...),
     attempt: str = Form(...),
@@ -277,7 +321,26 @@ def update_try_card(
     consequence: str = Form(...)
 ):
     with Session(engine) as session:
+        # Get the old card to check if consequence changed
+        old_card = db.get_try_card(session, card_id)
+        old_consequence = old_card.consequence if old_card else None
+        
+        # Update the card
         card = db.update_try_card(session, card_id, type, order_num, attempt, failure, consequence)
+        
+        # Regenerate icon if consequence text changed
+        if card and old_consequence != consequence:
+            # Set loading icon first
+            loading_icon_path = "static/loading-icon.png"
+            try:
+                with open(loading_icon_path, 'rb') as f:
+                    card.consequence_icon = f.read()
+                session.commit()
+            except FileNotFoundError:
+                print(f"⚠️ Loading icon not found at {loading_icon_path}")
+            
+            background_tasks.add_task(_generate_try_card_icon, card_id, consequence)
+        
         if card:
             # Redirect to refresh the page and show the new order
             return Response(status_code=200, headers={"HX-Redirect": "/"})
@@ -288,6 +351,81 @@ def delete_try_card(card_id: int):
     with Session(engine) as session:
         db.delete_try_card(session, card_id)
     return Response(status_code=200, headers={"HX-Redirect": "/"})
+
+@app.get("/api/try-card-icon/{card_id}")
+def get_try_card_icon(card_id: int):
+    """Serve the generated icon image for a Try card from the database."""
+    with Session(engine) as session:
+        card = db.get_try_card(session, card_id)
+        if card and card.consequence_icon:
+            return Response(content=card.consequence_icon, media_type="image/png")
+        else:
+            # Return 404 if no icon exists
+            return Response(status_code=404)
+
+
+@app.get("/api/try-card-icon-element/{card_id}")
+def get_try_card_icon_element(card_id: int):
+    """Return just the icon IMG element for polling updates."""
+    with Session(engine) as session:
+        card = db.get_try_card(session, card_id)
+        if not card:
+            return Response(status_code=404)
+        
+        # Check if it's the loading icon
+        is_loading_icon = False
+        if card.consequence_icon:
+            try:
+                with open("static/loading-icon.png", 'rb') as f:
+                    loading_icon_bytes = f.read()
+                is_loading_icon = (card.consequence_icon == loading_icon_bytes)
+            except FileNotFoundError:
+                pass
+        
+        # Build icon attributes
+        icon_attrs = {
+            "src": f"/api/try-card-icon/{card.id}",
+            "class_": "absolute top-2 right-2 rounded-md border border-gray-300 object-cover",
+            "alt": "Icon",
+            "style": "width: 120px; height: 120px;",
+            "id": f"try-icon-{card.id}"
+        }
+        
+        # If still loading, keep polling
+        if is_loading_icon:
+            icon_attrs["hx_get"] = f"/api/try-card-icon-element/{card.id}"
+            icon_attrs["hx_trigger"] = "every 2s"
+            icon_attrs["hx_swap"] = "outerHTML"
+            print(f"🔄 Still loading, continuing to poll card {card.id}")
+        else:
+            print(f"✅ Real icon ready for card {card.id}, stopping poll")
+        
+        return air.Img(**icon_attrs)
+
+
+@app.post("/api/try-card-icon/{card_id}/generate")
+def generate_try_card_icon_endpoint(card_id: int, background_tasks: BackgroundTasks):
+    """Manually trigger icon generation for a Try card."""
+    with Session(engine) as session:
+        card = db.get_try_card(session, card_id)
+        if card:
+            # Read the loading icon placeholder and save it immediately
+            loading_icon_path = "static/loading-icon.png"
+            try:
+                with open(loading_icon_path, 'rb') as f:
+                    card.consequence_icon = f.read()
+                session.commit()
+                session.refresh(card)
+            except FileNotFoundError:
+                print(f"⚠️ Loading icon not found at {loading_icon_path}")
+            
+            # Trigger async icon generation (will overwrite the loading icon)
+            background_tasks.add_task(_generate_try_card_icon, card.id, card.consequence)
+            # Return the card with the loading icon
+            return render_try_card(card)
+        else:
+            return Response(status_code=404)
+
 
 @app.post("/try-cards/{card_id}/reorder")
 def reorder_try_card(card_id: int, new_order: int = Form(...)):
