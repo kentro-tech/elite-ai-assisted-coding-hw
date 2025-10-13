@@ -8,6 +8,7 @@ from templates import TEMPLATES
 from components import render_mice_card, render_try_card, render_nesting_diagram, render_story_timeline, render_mice_help_panel
 import db
 from forms import mice_card_form, try_card_form
+import hf_api
 
 # Database setup
 DATABASE_URL = "sqlite:///story_builder.db"
@@ -83,6 +84,13 @@ def index():
                     "Templates",
                     class_="btn btn-info mr-2",
                     onclick="document.getElementById('templates-modal').showModal()"
+                ),
+                air.Button(
+                    "Test HuggingFace Connection",
+                    class_="btn btn-success mr-2",
+                    hx_get="/test-hf-api",
+                    hx_target="body",
+                    hx_swap="outerHTML"
                 ),
                 air.Button(
                     "Clear All Data",
@@ -287,4 +295,146 @@ def reorder_try_card(card_id: int, new_order: int = Form(...)):
     with Session(engine) as session:
         db.update_try_card_order(session, card_id, new_order)
     return Response(status_code=200, headers={"HX-Redirect": "/"})
+
+
+@app.get("/test-hf-api")
+def test_hf_api():
+    """Test endpoint to verify HuggingFace API connection with live status updates."""
+    return air.Html(
+        air.Head(
+            air.Title("Testing HuggingFace API"),
+            air.Script(src="https://unpkg.com/htmx.org@1.9.10"),
+        ),
+        air.Body(
+            air.Div(
+                air.H1("HuggingFace API Connection Test", class_="text-3xl font-bold mb-6"),
+                air.Div(
+                    # Status container that will be updated via HTMX
+                    air.Div(
+                        air.Div(
+                            air.Span("⏳", class_="text-4xl mr-3"),
+                            air.Span("Testing HuggingFace API connection...", class_="text-xl"),
+                            class_="flex items-center mb-4"
+                        ),
+                        air.Progress(class_="progress progress-primary w-full"),
+                        id="status-container",
+                        hx_get="/test-hf-api-run",
+                        hx_trigger="load",
+                        hx_swap="outerHTML"
+                    ),
+                    class_="card bg-base-200 p-8"
+                ),
+                class_="container mx-auto p-8 max-w-2xl"
+            ),
+            class_="min-h-screen bg-base-100"
+        )
+    )
+
+
+@app.get("/test-hf-api-run")
+def test_hf_api_run():
+    """Actually run the HuggingFace API test and return results."""
+    result = hf_api.test_api_connection()
+    
+    # Get API mode from result
+    api_mode = result.get("api_mode", "Unknown")
+    is_gradio = "Gradio" in api_mode
+    
+    # Check if it's a payment/credit error
+    is_payment_error = "402" in result["message"] or "Payment Required" in result["message"]
+    
+    if result["success"]:
+        status_icon = "✅"
+        status_text = "Success!"
+        status_class = "text-success"
+        detail_class = "alert alert-success"
+    elif is_payment_error:
+        status_icon = "💳"
+        status_text = "Payment Required"
+        status_class = "text-warning"
+        detail_class = "alert alert-warning"
+    else:
+        status_icon = "❌"
+        status_text = "Failed"
+        status_class = "text-error"
+        detail_class = "alert alert-error"
+    
+    return air.Div(
+        # Status header
+        air.Div(
+            air.Span(status_icon, class_="text-4xl mr-3"),
+            air.Span(status_text, class_=f"text-2xl font-bold {status_class}"),
+            class_="flex items-center mb-6"
+        ),
+        
+        # API Mode indicator
+        air.Div(
+            air.Span("🔧 API Mode: ", class_="font-semibold"),
+            air.Span(api_mode, class_="badge badge-lg badge-primary"),
+            class_="mb-4"
+        ),
+        
+        # Detailed message
+        air.Div(
+            air.Div(
+                air.H3("Status Details:", class_="font-bold mb-2"),
+                air.P(result["message"], class_="mb-4"),
+                
+                # Special message for payment errors or info about Gradio
+                air.Div(
+                    air.H4("💡 About HuggingFace APIs:", class_="font-bold mb-2"),
+                    air.P(
+                        "This application supports two API modes:",
+                        class_="mb-2 font-semibold"
+                    ),
+                    air.Ul(
+                        air.Li(
+                            air.Span("🆓 Gradio API (Free): ", class_="font-semibold"),
+                            "Uses public Gradio apps on HuggingFace Spaces. Free but may have rate limits. Set USE_GRADIO_API=true in .env"
+                        ),
+                        air.Li(
+                            air.Span("💳 Inference API (Paid): ", class_="font-semibold"),
+                            "Direct API access with HuggingFace Pro subscription or credits. Set USE_GRADIO_API=false in .env"
+                        ),
+                        class_="list-disc list-inside ml-4 space-y-2"
+                    ),
+                    air.P(
+                        f"Currently using: {api_mode}",
+                        class_="mt-3 font-semibold text-primary"
+                    ) if not is_payment_error else air.Div(
+                        air.P(
+                            "To fix the payment error:",
+                            class_="mt-3 font-semibold mb-1"
+                        ),
+                        air.Ul(
+                            air.Li("Switch to Gradio API (free) by setting USE_GRADIO_API=true in .env, or"),
+                            air.Li("Subscribe to HuggingFace Pro at https://huggingface.co/pricing"),
+                            class_="list-disc list-inside ml-4"
+                        )
+                    ),
+                    class_="mt-4 p-4 bg-base-300 rounded-lg"
+                ) if (is_payment_error or result["success"]) else "",
+                
+                class_=f"{detail_class} shadow-lg"
+            ),
+            class_="mb-6"
+        ),
+        
+        # Action buttons
+        air.Div(
+            air.A(
+                "← Back to Story Builder",
+                href="/",
+                class_="btn btn-primary"
+            ),
+            air.Button(
+                "🔄 Test Again",
+                onclick="window.location.reload()",
+                class_="btn btn-secondary ml-2"
+            ),
+            class_="flex gap-2"
+        ),
+        
+        id="status-container"
+    )
 

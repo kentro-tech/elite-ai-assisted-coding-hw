@@ -153,13 +153,15 @@ Each step below adds one complete, testable feature. After each step, you should
 
 ## Step 20: Set up HuggingFace API integration
 
-- [ ] Set up HF_TOKEN environment variable for authentication
-- [ ] Create helper function to call HuggingFace FLUX.1-dev model via Inference API
-- [ ] Implement basic prompt generation function that creates image prompts from text
-- [ ] Create test endpoint to verify API connection works
-- [ ] Add error handling for API failures (timeout, rate limits, invalid token)
-- [ ] Test API integration with a simple test prompt
-- [ ] Verify generated images can be retrieved and stored as BLOBs
+- [x] Set up HF_TOKEN environment variable for authentication
+- [x] Create helper function to call HuggingFace text-to-image models via Inference API
+- [x] Implement basic prompt generation function that creates image prompts from text
+- [x] Create test endpoint to verify API connection works
+- [x] Add error handling for API failures (timeout, rate limits, invalid token)
+- [x] Test API integration with a simple test prompt
+- [x] Verify generated images can be retrieved and stored as BLOBs
+- [x] Added Pillow dependency for image processing
+- [x] Documented that text-to-image requires HuggingFace Pro subscription or credits
 
 ## Step 21: Add icon generation for Try cards
 

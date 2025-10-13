@@ -4,7 +4,21 @@
 
 1. Set up python
 2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
-3. `cd` into the app directory and run with `uv run fastapi dev`
+3. Set up your HuggingFace configuration:
+   - Get your API token from [HuggingFace Settings](https://huggingface.co/settings/tokens)
+   - Create a `.env` file in the `app` directory (copy from `.env.example`)
+   - Add your token: `HF_TOKEN="your_token_here"`
+   - **Choose your API mode:**
+     - **Gradio API (Free, recommended for testing):** Set `USE_GRADIO_API="true"` (default)
+       - Uses public Gradio apps on HuggingFace Spaces
+       - Completely free but may have rate limits
+       - Perfect for development and testing
+     - **Inference API (Paid, for production):** Set `USE_GRADIO_API="false"`
+       - Direct API access with lower latency
+       - Requires HuggingFace Pro subscription or credits
+       - Better for production use
+4. `cd` into the app directory and run with `uv run fastapi dev`
+5. Test the API connection by visiting `http://localhost:8000/test-hf-api`
 
 ## Context Gathering
 
