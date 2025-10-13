@@ -2,6 +2,7 @@
 
 import air
 from models import MiceCard, TryCard
+from styles import BTN_XS_PRIMARY_MR, BTN_XS_PRIMARY_MR2, BTN_XS_ERROR, BTN_SM_OUTLINE_FULL, TEXT_XL_BOLD_MB3, MB_3
 
 # Tooltip content for MICE card types
 MICE_TOOLTIPS = {
@@ -56,14 +57,14 @@ def render_mice_card(card: MiceCard):
         air.Div(
             air.Button(
                 "Edit",
-                class_="btn btn-xs btn-primary mr-1",
+                class_=BTN_XS_PRIMARY_MR,
                 hx_get=f"/mice-edit/{card.id}",
                 hx_target=f"#mice-card-{card.id}",
                 hx_swap="outerHTML"
             ),
             air.Button(
                 "Delete",
-                class_="btn btn-xs btn-error",
+                class_=BTN_XS_ERROR,
                 hx_delete=f"/mice-cards/{card.id}",
                 hx_target=f"#mice-card-{card.id}",
                 hx_swap="outerHTML"
@@ -101,14 +102,14 @@ def render_try_card(card: TryCard):
         air.Div(
             air.Button(
                 "Edit",
-                class_="btn btn-xs btn-primary mr-2",
+                class_=BTN_XS_PRIMARY_MR2,
                 hx_get=f"/try-edit/{card.id}",
                 hx_target=f"#try-card-{card.id}",
                 hx_swap="outerHTML"
             ),
             air.Button(
                 "Delete",
-                class_="btn btn-xs btn-error",
+                class_=BTN_XS_ERROR,
                 hx_delete=f"/try-cards/{card.id}",
                 hx_target="body",
                 hx_swap="outerHTML",
@@ -233,14 +234,14 @@ def render_mice_help_panel():
         air.Div(
             air.Button(
                 "📚 What is MICE Quotient?",
-                class_="btn btn-sm btn-outline w-full text-left",
+                class_=BTN_SM_OUTLINE_FULL,
                 onclick="const el = document.getElementById('mice-help'); el.style.display = el.style.display === 'none' ? 'block' : 'none';"
             ),
             class_="mb-2"
         ),
         air.Div(
-            air.H3("MICE Quotient Story Structure", class_="text-xl font-bold mb-3"),
-            air.P("The MICE Quotient is a plotting technique by Orson Scott Card, enhanced by Mary Robinette Kowal. Each letter represents a promise you make to your reader:", class_="mb-3"),
+            air.H3("MICE Quotient Story Structure", class_=TEXT_XL_BOLD_MB3),
+            air.P("The MICE Quotient is a plotting technique by Orson Scott Card, enhanced by Mary Robinette Kowal. Each letter represents a promise you make to your reader:", class_=MB_3),
             air.Div(
                 air.Div(
                     air.H4("M - Milieu", class_="font-bold text-lg mb-1 text-blue-700"),
