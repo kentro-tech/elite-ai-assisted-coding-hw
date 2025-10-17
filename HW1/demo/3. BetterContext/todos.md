@@ -191,17 +191,17 @@ Each step below adds one complete, testable feature. After each step, you should
 
 ## Step 22: Add icon generation for MICE cards
 
-- [ ] Create endpoint to serve MICE card images from database BLOBs (e.g., `/api/mice-card-icon/<id>/<type>`)
-- [ ] Update MICE card POST endpoint to trigger async icon generation after saving:
-  - [ ] Generate prompt from opening text for Act 1 icon
-  - [ ] Generate prompt from closing text for Act 3 icon
-  - [ ] Call HuggingFace API to generate both images
-  - [ ] Save both image BLOBs to database
-- [ ] Update MICE card display to show generated icons instead of placeholders when available
-- [ ] Add loading/generation status indicator on cards during generation
-- [ ] Update MICE card PUT endpoint to regenerate icons when opening/closing text changes
-- [ ] Test creating new MICE cards and verify both icons generate and display
-- [ ] Test editing MICE cards and verify icons update appropriately
+- [x] Create endpoint to serve MICE card images from database BLOBs (e.g., `/api/mice-card-icon/<id>/<type>`)
+- [x] Update MICE card POST endpoint to trigger async icon generation after saving:
+  - [x] Generate prompt from opening text for Act 1 icon
+  - [x] Generate prompt from closing text for Act 3 icon
+  - [x] Call HuggingFace API to generate both images
+  - [x] Save both image BLOBs to database
+- [x] Update MICE card display to show generated icons instead of placeholders when available
+- [x] Add loading/generation status indicator on cards during generation
+- [x] Update MICE card PUT endpoint to regenerate icons when opening/closing text changes
+- [x] Test creating new MICE cards and verify both icons generate and display
+- [x] Test editing MICE cards and verify icons update appropriately
 
 ## Step 23: Add AI outline generation
 

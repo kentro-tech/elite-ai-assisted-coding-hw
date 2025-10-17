@@ -82,25 +82,25 @@ def index():
             air.Div(
                 air.Button(
                     "Templates",
-                    class_="btn btn-info mr-2",
+                    class_="btn btn-sm btn-info mr-3",
                     onclick="document.getElementById('templates-modal').showModal()"
                 ),
                 air.Button(
                     "Test HuggingFace Connection",
-                    class_="btn btn-success mr-2",
+                    class_="btn btn-sm btn-success mr-3",
                     hx_get="/test-hf-api",
                     hx_target="body",
                     hx_swap="outerHTML"
                 ),
                 air.Button(
                     "Clear All Data",
-                    class_="btn btn-error",
+                    class_="btn btn-sm btn-error",
                     hx_post="/clear-data",
                     hx_target="body",
                     hx_swap="outerHTML",
                     hx_confirm="Are you sure you want to delete all cards? This cannot be undone."
                 ),
-                class_="mb-4"
+                class_="mb-6 flex gap-3"
             ),
             _templates_modal(),
             render_mice_help_panel(),

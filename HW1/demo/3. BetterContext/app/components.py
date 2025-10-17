@@ -85,7 +85,7 @@ def render_mice_card(card: MiceCard):
                 return air.Div(
                     air.Img(
                         src=f"/api/mice-card-icon/{card.id}/{icon_type}",
-                        class_="w-full h-full object-cover"
+                        class_="w-full h-full object-cover rounded-md"
                     ),
                     class_=f"absolute {position_class} right-2 rounded-md border border-gray-300 cursor-pointer hover:border-blue-400 transition-colors",
                     style="width: 100px; height: 100px;",
@@ -100,7 +100,7 @@ def render_mice_card(card: MiceCard):
             return air.Div(
                 air.Img(
                     src="/static/placeholder.svg",
-                    class_="w-full h-full object-cover"
+                    class_="w-full h-full object-cover rounded-md"
                 ),
                 class_=f"absolute {position_class} right-2 rounded-md border border-gray-300 bg-gray-200 cursor-pointer hover:bg-gray-300 hover:border-blue-400 transition-colors flex items-center justify-center",
                 title="Click to generate icon",
@@ -182,7 +182,7 @@ def render_try_card(card: TryCard):
             icon_element = air.Div(
                 air.Img(
                     src=f"/api/try-card-icon/{card.id}",
-                    class_="w-full h-full object-cover"
+                    class_="w-full h-full object-cover rounded-md"
                 ),
                 class_="absolute top-2 right-2 rounded-md border border-gray-300 cursor-pointer hover:border-blue-400 transition-colors",
                 style="width: 120px; height: 120px;",
@@ -197,7 +197,7 @@ def render_try_card(card: TryCard):
         icon_element = air.Div(
             air.Img(
                 src="/static/placeholder.svg",
-                class_="w-full h-full object-cover"
+                class_="w-full h-full object-cover rounded-md"
             ),
             class_="absolute top-2 right-2 rounded-md border border-gray-300 bg-gray-200 cursor-pointer hover:bg-gray-300 hover:border-blue-400 transition-colors flex items-center justify-center",
             title="Click to generate icon",
