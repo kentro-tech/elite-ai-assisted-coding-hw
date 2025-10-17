@@ -1,0 +1,15 @@
+# Test databases
+test_*.db
+tests/test_*.db
+
+# Pytest cache
+.pytest_cache/
+__pycache__/
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# Temporary database from examples
+database.db
+

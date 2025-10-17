@@ -1,10 +1,67 @@
-# Context Gathering
+# MICE Story Builder - BetterContext Version
 
 ## How to run
 
 1. Set up python
 2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
 3. `cd` into the app directory and run with `uv run fastapi dev`
+
+## Running Tests
+
+This project has comprehensive test coverage (96%!) with 83 automated tests.
+
+### Quick Start
+
+```bash
+# Run all tests
+cd app
+uv run pytest
+
+# Run with verbose output
+uv run pytest -v
+
+# Run specific test file
+uv run pytest tests/test_db.py
+uv run pytest tests/test_api_mice.py
+
+# Run with coverage report
+uv run pytest --cov=. --cov-report=term --cov-report=html
+
+# View HTML coverage report
+open htmlcov/index.html  # macOS
+xdg-open htmlcov/index.html  # Linux
+```
+
+### Test Organization
+
+- **`tests/test_setup.py`** - Basic setup verification (6 tests)
+- **`tests/test_db.py`** - Database CRUD operations (22 tests)
+- **`tests/test_api_mice.py`** - MICE card API endpoints (14 tests)
+- **`tests/test_api_try.py`** - Try card API endpoints (11 tests)
+- **`tests/test_api_templates.py`** - Template loading & utilities (9 tests)
+- **`tests/test_edge_cases.py`** - Edge cases & bug discovery (21 tests)
+
+### Coverage Results
+
+- **Overall**: 96% coverage
+- **db.py**: 100% ✅
+- **main.py**: 98% ✅
+- **components.py**: 100% ✅
+- **forms.py**: 100% ✅
+- **models.py**: 100% ✅
+
+### Bugs Discovered
+
+We found 8 bugs through systematic testing! See [`bugs-discovered.md`](bugs-discovered.md) for details:
+- 1 Critical (Security - XSS vulnerability)
+- 3 Important (Invalid codes, duplicate orders)
+- 4 Minor (Empty fields, negative numbers, long text)
+
+### Test Documentation
+
+- **Testing Strategy**: See [`quality-plan.md`](quality-plan.md)
+- **Progress Tracking**: See [`quality-todos.md`](quality-todos.md)
+- **Bugs Found**: See [`bugs-discovered.md`](bugs-discovered.md)
 
 ## Context Gathering
 
