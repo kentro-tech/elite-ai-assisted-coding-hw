@@ -1,0 +1,9 @@
+[project]
+name = "onboarding"
+version = "0.1.0"
+description = "Air framework onboarding project"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "air[standard]>=0.33.1",
+]

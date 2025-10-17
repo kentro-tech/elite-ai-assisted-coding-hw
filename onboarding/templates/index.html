@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My First Air App</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.5.7/css/pico.min.css">
+</head>
+<body>
+    <main class="container">
+        <h1>Welcome, {{ user_name }}!</h1>
+        <p>This is my first Air + HTMX application!</p>
+        
+        <button hx-get="/greeting" hx-target="#response">
+            Get Greeting
+        </button>
+        
+        <div id="response">
+            <!-- The server's response will appear here -->
+        </div>
+    </main>
+</body>
+</html>
