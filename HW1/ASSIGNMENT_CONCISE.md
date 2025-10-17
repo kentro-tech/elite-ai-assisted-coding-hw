@@ -40,6 +40,7 @@ You don't have to do all of them, just pick one in an area that interests you.  
     - Quality:
         - Add test suite
         - Refactor to improve code quality
+        - Fix bugs (like styling bug shown in the demo in lecture #1)
     
 **Level 2**
 
