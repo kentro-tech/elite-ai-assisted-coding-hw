@@ -3,14 +3,20 @@
 import air
 from models import MiceCard, TryCard
 from components import MICE_COLORS
+from styles import (
+    FORM_CONTROL, LABEL, SELECT_BORDERED_FULL_MB2, SELECT_BORDERED_FULL_MB1,
+    TEXTAREA_BORDERED_FULL_MB2, TEXTAREA_BORDERED_FULL_MB1, 
+    INPUT_BORDERED_FULL_MB2, INPUT_BORDERED_FULL_MB1,
+    BTN_SUCCESS_MR, BTN_GHOST, BTN_XS_SUCCESS_MR, BTN_XS_GHOST, CARD_FORM
+)
 
 
 def _form_field(label: str, input_element):
     """Helper to create a labeled form field."""
     return air.Div(
-        air.Label(label, class_="label"),
+        air.Label(label, class_=LABEL),
         input_element,
-        class_="form-control"
+        class_=FORM_CONTROL
     )
 
 
@@ -25,7 +31,7 @@ def _mice_edit_form(card: MiceCard) -> air.Form:
                 air.Option("Character", value="C", selected=(card.code == "C")),
                 air.Option("Event", value="E", selected=(card.code == "E")),
                 name="code",
-                class_="select select-bordered w-full mb-1"
+                class_=SELECT_BORDERED_FULL_MB1
             )
         ),
         _form_field(
@@ -33,7 +39,7 @@ def _mice_edit_form(card: MiceCard) -> air.Form:
             air.Textarea(
                 card.opening,
                 name="opening",
-                class_="textarea textarea-bordered w-full mb-1",
+                class_=TEXTAREA_BORDERED_FULL_MB1,
                 rows="2"
             )
         ),
@@ -42,7 +48,7 @@ def _mice_edit_form(card: MiceCard) -> air.Form:
             air.Textarea(
                 card.closing,
                 name="closing",
-                class_="textarea textarea-bordered w-full mb-1",
+                class_=TEXTAREA_BORDERED_FULL_MB1,
                 rows="2"
             )
         ),
@@ -52,18 +58,18 @@ def _mice_edit_form(card: MiceCard) -> air.Form:
                 type="number",
                 name="nesting_level",
                 value=str(card.nesting_level),
-                class_="input input-bordered w-full mb-1"
+                class_=INPUT_BORDERED_FULL_MB1
             )
         ),
         air.Button(
             "Save",
             type="submit",
-            class_="btn btn-success btn-xs mr-2"
+            class_=BTN_XS_SUCCESS_MR
         ),
         air.Button(
             "Cancel",
             type="button",
-            class_="btn btn-ghost btn-xs",
+            class_=BTN_XS_GHOST,
             hx_get=f"/mice-card/{card.id}",
             hx_target=f"#mice-card-{card.id}",
             hx_swap="outerHTML"
@@ -81,54 +87,54 @@ def _mice_create_form() -> air.Form:
     """Build create form for MICE card."""
     return air.Form(
         air.Div(
-            air.Label("Type:", class_="label"),
+            air.Label("Type:", class_=LABEL),
             air.Select(
                 air.Option("Milieu", value="M"),
                 air.Option("Idea", value="I"),
                 air.Option("Character", value="C"),
                 air.Option("Event", value="E"),
                 name="code",
-                class_="select select-bordered w-full mb-2"
+                class_=SELECT_BORDERED_FULL_MB2
             ),
-            class_="form-control"
+            class_=FORM_CONTROL
         ),
         air.Div(
-            air.Label("Opening:", class_="label"),
+            air.Label("Opening:", class_=LABEL),
             air.Textarea(
                 name="opening",
-                class_="textarea textarea-bordered w-full mb-2",
+                class_=TEXTAREA_BORDERED_FULL_MB2,
                 rows="3"
             ),
-            class_="form-control"
+            class_=FORM_CONTROL
         ),
         air.Div(
-            air.Label("Closing:", class_="label"),
+            air.Label("Closing:", class_=LABEL),
             air.Textarea(
                 name="closing",
-                class_="textarea textarea-bordered w-full mb-2",
+                class_=TEXTAREA_BORDERED_FULL_MB2,
                 rows="3"
             ),
-            class_="form-control"
+            class_=FORM_CONTROL
         ),
         air.Div(
-            air.Label("Nesting Level:", class_="label"),
+            air.Label("Nesting Level:", class_=LABEL),
             air.Input(
                 type="number",
                 name="nesting_level",
                 value="1",
-                class_="input input-bordered w-full mb-2"
+                class_=INPUT_BORDERED_FULL_MB2
             ),
-            class_="form-control"
+            class_=FORM_CONTROL
         ),
         air.Button(
             "Save",
             type="submit",
-            class_="btn btn-success mr-2"
+            class_=BTN_SUCCESS_MR
         ),
         air.Button(
             "Cancel",
             type="button",
-            class_="btn btn-ghost",
+            class_=BTN_GHOST,
             hx_get="/clear-form",
             hx_target="#mice-form-container",
             hx_swap="innerHTML"
@@ -136,7 +142,7 @@ def _mice_create_form() -> air.Form:
         hx_post="/mice-cards",
         hx_target="body",
         hx_swap="outerHTML",
-        class_="card bg-base-100 shadow-lg p-4 mb-3"
+        class_=CARD_FORM
     )
 
 
@@ -202,12 +208,12 @@ def _try_edit_form(card: TryCard) -> air.Form:
             air.Button(
                 "Save",
                 type="submit",
-                class_="btn btn-success btn-xs mr-2"
+                class_=BTN_XS_SUCCESS_MR
             ),
             air.Button(
                 "Cancel",
                 type="button",
-                class_="btn btn-ghost btn-xs",
+                class_=BTN_XS_GHOST,
                 hx_get=f"/try-card/{card.id}",
                 hx_target=f"#try-card-{card.id}",
                 hx_swap="outerHTML"
@@ -227,63 +233,63 @@ def _try_create_form() -> air.Form:
     """Build create form for Try card."""
     return air.Form(
         air.Div(
-            air.Label("Cycle Type:", class_="label"),
+            air.Label("Cycle Type:", class_=LABEL),
             air.Select(
                 air.Option("Success", value="Success"),
                 air.Option("Failure", value="Failure"),
                 air.Option("Trade-off", value="Trade-off"),
                 air.Option("Moral", value="Moral"),
                 name="type",
-                class_="select select-bordered w-full mb-2"
+                class_=SELECT_BORDERED_FULL_MB2
             ),
-            class_="form-control"
+            class_=FORM_CONTROL
         ),
         air.Div(
-            air.Label("Order Number:", class_="label"),
+            air.Label("Order Number:", class_=LABEL),
             air.Input(
                 type="number",
                 name="order_num",
                 value="1",
-                class_="input input-bordered w-full mb-2"
+                class_=INPUT_BORDERED_FULL_MB2
             ),
-            class_="form-control"
+            class_=FORM_CONTROL
         ),
         air.Div(
-            air.Label("Attempt:", class_="label"),
+            air.Label("Attempt:", class_=LABEL),
             air.Textarea(
                 name="attempt",
-                class_="textarea textarea-bordered w-full mb-2",
+                class_=TEXTAREA_BORDERED_FULL_MB2,
                 rows="2"
             ),
-            class_="form-control"
+            class_=FORM_CONTROL
         ),
         air.Div(
-            air.Label("Failure:", class_="label"),
+            air.Label("Failure:", class_=LABEL),
             air.Textarea(
                 name="failure",
-                class_="textarea textarea-bordered w-full mb-2",
+                class_=TEXTAREA_BORDERED_FULL_MB2,
                 rows="2"
             ),
-            class_="form-control"
+            class_=FORM_CONTROL
         ),
         air.Div(
-            air.Label("Consequence:", class_="label"),
+            air.Label("Consequence:", class_=LABEL),
             air.Textarea(
                 name="consequence",
-                class_="textarea textarea-bordered w-full mb-2",
+                class_=TEXTAREA_BORDERED_FULL_MB2,
                 rows="2"
             ),
-            class_="form-control"
+            class_=FORM_CONTROL
         ),
         air.Button(
             "Save",
             type="submit",
-            class_="btn btn-success mr-2"
+            class_=BTN_SUCCESS_MR
         ),
         air.Button(
             "Cancel",
             type="button",
-            class_="btn btn-ghost",
+            class_=BTN_GHOST,
             hx_get="/clear-try-form",
             hx_target="#try-form-container",
             hx_swap="innerHTML"
@@ -291,7 +297,7 @@ def _try_create_form() -> air.Form:
         hx_post="/try-cards",
         hx_target="body",
         hx_swap="outerHTML",
-        class_="card bg-base-100 shadow-lg p-4 mb-3"
+        class_=CARD_FORM
     )
 
 

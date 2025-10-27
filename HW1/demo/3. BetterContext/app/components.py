@@ -2,6 +2,11 @@
 
 import air
 from models import MiceCard, TryCard
+from styles import (
+    BTN_XS_PRIMARY_MR, BTN_XS_PRIMARY_MR2, BTN_XS_ERROR, BTN_SM_OUTLINE_FULL, 
+    TEXT_XL_BOLD_MB3, TEXT_SM_MB1, TEXT_XS_ITALIC_GRAY, TEXT_GRAY_ITALIC_SM,
+    GRID_2_COL_GAP3_MB4, LIST_DISC_INSIDE_SPACED, MB_3
+)
 
 # Tooltip content for MICE card types
 MICE_TOOLTIPS = {
@@ -56,14 +61,14 @@ def render_mice_card(card: MiceCard):
         air.Div(
             air.Button(
                 "Edit",
-                class_="btn btn-xs btn-primary mr-1",
+                class_=BTN_XS_PRIMARY_MR,
                 hx_get=f"/mice-edit/{card.id}",
                 hx_target=f"#mice-card-{card.id}",
                 hx_swap="outerHTML"
             ),
             air.Button(
                 "Delete",
-                class_="btn btn-xs btn-error",
+                class_=BTN_XS_ERROR,
                 hx_delete=f"/mice-cards/{card.id}",
                 hx_target=f"#mice-card-{card.id}",
                 hx_swap="outerHTML"
@@ -101,14 +106,14 @@ def render_try_card(card: TryCard):
         air.Div(
             air.Button(
                 "Edit",
-                class_="btn btn-xs btn-primary mr-2",
+                class_=BTN_XS_PRIMARY_MR2,
                 hx_get=f"/try-edit/{card.id}",
                 hx_target=f"#try-card-{card.id}",
                 hx_swap="outerHTML"
             ),
             air.Button(
                 "Delete",
-                class_="btn btn-xs btn-error",
+                class_=BTN_XS_ERROR,
                 hx_delete=f"/try-cards/{card.id}",
                 hx_target="body",
                 hx_swap="outerHTML",
@@ -210,17 +215,17 @@ def render_story_timeline(mice_cards, try_cards):
     return air.Div(
         air.Div(
             air.H4("Act 1: Setup", class_="font-bold text-green-700 mb-2"),
-            air.Ul(*act1_items, class_="list-disc list-inside space-y-1") if act1_items else air.P("No openings", class_="text-gray-500 italic text-sm"),
+            air.Ul(*act1_items, class_=LIST_DISC_INSIDE_SPACED) if act1_items else air.P("No openings", class_=TEXT_GRAY_ITALIC_SM),
             class_="bg-green-50 p-3 rounded mb-3"
         ),
         air.Div(
             air.H4("Act 2: Confrontation", class_="font-bold text-blue-700 mb-2"),
-            air.Ul(*act2_items, class_="list-disc list-inside space-y-1") if act2_items else air.P("No try/fail cycles", class_="text-gray-500 italic text-sm"),
+            air.Ul(*act2_items, class_=LIST_DISC_INSIDE_SPACED) if act2_items else air.P("No try/fail cycles", class_=TEXT_GRAY_ITALIC_SM),
             class_="bg-blue-50 p-3 rounded mb-3"
         ),
         air.Div(
             air.H4("Act 3: Resolution", class_="font-bold text-purple-700 mb-2"),
-            air.Ul(*act3_items, class_="list-disc list-inside space-y-1") if act3_items else air.P("No closings", class_="text-gray-500 italic text-sm"),
+            air.Ul(*act3_items, class_=LIST_DISC_INSIDE_SPACED) if act3_items else air.P("No closings", class_=TEXT_GRAY_ITALIC_SM),
             class_="bg-purple-50 p-3 rounded"
         ),
         class_="mt-4"
@@ -233,40 +238,40 @@ def render_mice_help_panel():
         air.Div(
             air.Button(
                 "📚 What is MICE Quotient?",
-                class_="btn btn-sm btn-outline w-full text-left",
+                class_=BTN_SM_OUTLINE_FULL,
                 onclick="const el = document.getElementById('mice-help'); el.style.display = el.style.display === 'none' ? 'block' : 'none';"
             ),
             class_="mb-2"
         ),
         air.Div(
-            air.H3("MICE Quotient Story Structure", class_="text-xl font-bold mb-3"),
-            air.P("The MICE Quotient is a plotting technique by Orson Scott Card, enhanced by Mary Robinette Kowal. Each letter represents a promise you make to your reader:", class_="mb-3"),
+            air.H3("MICE Quotient Story Structure", class_=TEXT_XL_BOLD_MB3),
+            air.P("The MICE Quotient is a plotting technique by Orson Scott Card, enhanced by Mary Robinette Kowal. Each letter represents a promise you make to your reader:", class_=MB_3),
             air.Div(
                 air.Div(
                     air.H4("M - Milieu", class_="font-bold text-lg mb-1 text-blue-700"),
-                    air.P("Environment, setting, atmosphere", class_="text-sm mb-1"),
-                    air.P("Example: Character enters a new world → explores → leaves", class_="text-xs italic text-gray-600"),
+                    air.P("Environment, setting, atmosphere", class_=TEXT_SM_MB1),
+                    air.P("Example: Character enters a new world → explores → leaves", class_=TEXT_XS_ITALIC_GRAY),
                     class_="bg-blue-100 border-l-4 border-blue-300 p-3 rounded"
                 ),
                 air.Div(
                     air.H4("I - Idea", class_="font-bold text-lg mb-1 text-green-700"),
-                    air.P("Question, mystery", class_="text-sm mb-1"),
-                    air.P("Example: A question is posed → investigated → answered", class_="text-xs italic text-gray-600"),
+                    air.P("Question, mystery", class_=TEXT_SM_MB1),
+                    air.P("Example: A question is posed → investigated → answered", class_=TEXT_XS_ITALIC_GRAY),
                     class_="bg-green-100 border-l-4 border-green-300 p-3 rounded"
                 ),
                 air.Div(
                     air.H4("C - Character", class_="font-bold text-lg mb-1 text-yellow-700"),
-                    air.P("Internal problems, goals, change", class_="text-sm mb-1"),
-                    air.P("Example: Character is dissatisfied → struggles → transforms", class_="text-xs italic text-gray-600"),
+                    air.P("Internal problems, goals, change", class_=TEXT_SM_MB1),
+                    air.P("Example: Character is dissatisfied → struggles → transforms", class_=TEXT_XS_ITALIC_GRAY),
                     class_="bg-yellow-100 border-l-4 border-yellow-300 p-3 rounded"
                 ),
                 air.Div(
                     air.H4("E - Event", class_="font-bold text-lg mb-1 text-purple-700"),
-                    air.P("External problems, catastrophes", class_="text-sm mb-1"),
-                    air.P("Example: World order disrupted → crisis → new order restored", class_="text-xs italic text-gray-600"),
+                    air.P("External problems, catastrophes", class_=TEXT_SM_MB1),
+                    air.P("Example: World order disrupted → crisis → new order restored", class_=TEXT_XS_ITALIC_GRAY),
                     class_="bg-purple-100 border-l-4 border-purple-300 p-3 rounded"
                 ),
-                class_="grid grid-cols-2 gap-3 mb-4"
+                class_=GRID_2_COL_GAP3_MB4
             ),
             air.H4("Nesting Structure", class_="font-bold text-lg mb-2"),
             air.P("Act 1 mirrors Act 3 in opposite order - like boxes within boxes. Open them in order 1→2→3→4, then close them in reverse 4→3→2→1. This creates satisfying symmetry!", class_="mb-3 text-sm"),
