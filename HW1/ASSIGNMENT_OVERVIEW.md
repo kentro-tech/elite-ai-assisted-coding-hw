@@ -87,13 +87,31 @@ This assignment isn't about writing every line of code yourself. It's about:
 - Review and commit incrementally
 - Refactor when a feature is complete
 
+## The Specflow Process
+
+For larger features, consider using the **Specflow** methodology—a structured approach to going from idea to implementation:
+
+1. **Brainstorm** (`BRAINSTORM.md`) - Capture raw, unstructured ideas. Voice transcription works great here.
+
+2. **Specify** (`SPEC.md`) - Transform your brainstorm into a formal specification. Think through:
+   - Who are the users and what do they need?
+   - What are the important features?
+   - What technology stack will you use?
+   - What assumptions are being made?
+
+3. **Task** (`TASKS.md`) - Break the spec into a list of development tasks that AI can execute one at a time.
+
+The key insight: **you are the architect**. AI handles implementation, but you provide direction through clear specifications.
+
+Templates and more details: https://github.com/specstoryai/specflow
+
 ## Getting Started
 
 1. **Understand the domain** - Read about the MICE Quotient structure for story outlining
 2. **Define your requirements** - What exactly should this app do?
 3. **Choose your tools** - What framework and AI assistant will you use?
 4. **Set up verification** - How will you (and AI) know if something works?
-5. **Plan your approach** - What order will you build features?
+5. **Plan your approach** - What order will you build features? Consider using Specflow.
 6. **Start building** - Begin with the simplest functional version
 
 ## Resources
@@ -101,3 +119,4 @@ This assignment isn't about writing every line of code yourself. It's about:
 - Example implementation: `/demo/3. BetterContext/`
 - Context examples: See `CLAUDE.md`, `plan.md`, `todos.md` in demo
 - Process documentation: `README.md` in demo directory
+- Specflow templates: https://github.com/specstoryai/specflow
