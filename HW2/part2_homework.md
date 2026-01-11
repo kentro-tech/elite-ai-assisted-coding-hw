@@ -47,6 +47,20 @@ In this case study, a complete JupyterLab extension went from idea to published 
 
 This is ambitious. Your first project should be simpler. But it shows what becomes possible as you build skill.
 
+**A Simpler Example: Discord Image Bot**
+
+[Building a Discord Bot with an AI Agent](https://isaacflath.com/writing/discord-bot-with-ai-agent)
+
+This project takes a different approach—solving a daily annoyance with minimal code. The bot monitors a Discord channel for images, uploads them to S3, and replies with the URL. That's it. A few clicks saved every day.
+
+What makes this a good example:
+- **Solves a real friction point** - Embedding images in posts required manual upload steps
+- **Built end-to-end with AI** - From concept through deployment
+- **Practical scope** - Small enough to complete in one session
+- **Actually gets used** - The best tool is one you'll keep using
+
+This is closer to where you should start.
+
 ## The Process
 
 ### 1. Brainstorm
