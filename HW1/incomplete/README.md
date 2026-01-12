@@ -6,7 +6,7 @@ Your starting point for the Context-Driven Development assignment.
 
 ```bash
 cd HW1/incomplete
-uv run fastapi dev
+uv run uvicorn main:app --reload
 ```
 
 Then open http://localhost:8000 in your browser.

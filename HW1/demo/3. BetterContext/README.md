@@ -6,7 +6,7 @@ Reference implementation with full context and MCP server integration.
 
 ```bash
 cd "HW1/demo/3. BetterContext/app"
-uv run fastapi dev
+uv run uvicorn main:app --reload
 ```
 
 Then open http://localhost:8000 in your browser.

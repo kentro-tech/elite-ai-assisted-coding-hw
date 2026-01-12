@@ -12,12 +12,12 @@ We're building a SaaS app to help writers outline short stories using Orson Scot
 
 ```bash
 cd HW1/demo/3.\ BetterContext/app
-uv run fastapi dev
+uv run uvicorn main:app --reload
 ```
 
 Then open http://localhost:8000 in your browser.
 
-This works for any app directory - just `cd` into it and run `uv run fastapi dev`.
+This works for any app directory - just `cd` into it and run `uv run uvicorn main:app --reload`.
 
 ### Getting Started
 1. Read [HW1: Context-Driven Development](./HW1/ASSIGNMENT_OVERVIEW.md)
