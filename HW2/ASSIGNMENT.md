@@ -32,26 +32,15 @@ Pick something you've wanted but put off because it seemed like too much work.
 - **A clear spec** showing how you defined the requirements before building
 - **Evidence of AI collaboration** - the prompts, context, or conversation that produced it
 
-## Inspiration (Not a Starting Point)
+## Inspiration
 
-Don't start here. Start small. But once you're comfortable, see how far this can go:
+**Discord Image Bot**
 
-[Building a Jupyter AI Plugin: A Case Study](https://isaacflath.com/writing/Agentic-Coding-Custom-Jupyter-Exension)
-
-In this case study, a complete JupyterLab extension went from idea to published PyPI package in a day. The human provided direction while AI handled research, implementation, testing, and debugging. What made it work:
-
-- **Research first** - AI studied existing codebases and documentation
-- **Planning before coding** - Created structured plans and test strategies
-- **Iterative refinement** - Human provided taste and direction; AI handled mechanics
-- **Self-tooling** - AI built debugging tools for itself
-
-This is ambitious. Your first project should be simpler. But it shows what becomes possible as you build skill.
-
-**A Simpler Example: Discord Image Bot**
+This is an example with the minimal amount of effort put in!  By following specflow and clear specs you can go much further. But I hope this shows that it's possible to make small useful tooling.
 
 [Building a Discord Bot with an AI Agent](https://isaacflath.com/writing/discord-bot-with-ai-agent)
 
-This project takes a different approach—solving a daily annoyance with minimal code. The bot monitors a Discord channel for images, uploads them to S3, and replies with the URL. That's it. A few clicks saved every day.
+This project solves a daily annoyance with minimal code. The bot monitors a Discord channel for images, uploads them to S3, and replies with the URL. A few clicks saved every day.
 
 What makes this a good example:
 - **Solves a real friction point** - Embedding images in posts required manual upload steps
@@ -59,7 +48,7 @@ What makes this a good example:
 - **Practical scope** - Small enough to complete in one session
 - **Actually gets used** - The best tool is one you'll keep using
 
-This is closer to where you should start.
+This is a good place to start.
 
 ## The Process
 
