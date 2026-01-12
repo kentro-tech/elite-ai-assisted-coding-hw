@@ -4,8 +4,15 @@ Reference implementation with full context and MCP server integration.
 
 ## Running the App
 
+From the repo root:
 ```bash
 cd "HW1/demo/3. BetterContext/app"
+uv run uvicorn main:app --reload
+```
+
+Or if you're already in this directory:
+```bash
+cd app
 uv run uvicorn main:app --reload
 ```
 

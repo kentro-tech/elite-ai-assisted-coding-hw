@@ -17,7 +17,7 @@ uv run uvicorn main:app --reload
 
 Then open http://localhost:8000 in your browser.
 
-This works for any app directory - just `cd` into it and run `uv run uvicorn main:app --reload`.
+Run from the directory containing `main.py` (usually the `app/` subdirectory).
 
 ### Getting Started
 1. Read [HW1: Context-Driven Development](./HW1/ASSIGNMENT_OVERVIEW.md)
