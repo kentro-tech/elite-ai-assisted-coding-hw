@@ -1,4 +1,20 @@
 .specstory/
+.context/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Thumbnails
+Thumbs.db
+ehthumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
