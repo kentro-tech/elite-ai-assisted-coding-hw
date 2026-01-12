@@ -1,10 +1,33 @@
-# Style
+# Code Quality Guidelines
 
-I want you to keep in mind the following stylistic choices that I make:
-1. Use type hinting where possible to ensure the code is clear and it's understandable what should be passed to things.
-2. Things should be refactored to have decent separation of concerns, but not to such an extreme. Any kind of abstraction should be weighed for how thin vs thick it is, how many times it's duplicated, and what's the cost of adding the redirection. An abstraction that only calls another function is not helpful and actually adds complexity. Put code in its appropriate place. For example, Python code goes in Python files, CSS code goes in CSS files, and JavaScript blocks go in JavaScript files. Don't embed massive CSS blocks in a Python string or in a Jinja template just like you wouldn't have massive amounts of JavaScript. Those can be imported.
-3.  The next thing I want to keep in mind is that I do not want any error handling. I am first trying to build a feature and make sure it works, and error handling disguises errors, so it's important to me to see the full stack trace and let the app fail. I can decide very surgically in what cases do I want an error not to crash the app. Most of the times I do want it to crash so that I can fix it so that never happens again.
-4.  Three, do not mock things as an example for like what it might be like. In production it should be created as if it were the real thing. So if you are not able to do something instead of creating an imitation of that thing stop and ask tell me what you need to do this properly.
+When generating or modifying code, please adhere to these principles:
+
+## Type Safety & Clarity
+- **Type Hinting**: Always use type hints to make code clear and self-documenting. Every function parameter and return value should have explicit type annotations.
+
+## Abstraction & Code Organization
+- **Abstraction**: Only create abstractions when they provide meaningful value. Evaluate each abstraction by:
+    - How thick vs. thin it is (avoid thin wrappers that just call another function).
+    - How many times the pattern is duplicated (don't abstract until there's clear duplication several times)
+    - The cost of adding indirection to readability (complexity should be justified)
+- **Duplication**: Some duplication is acceptable. If it's just a couple lines of code refactor on the third occurrence, not the second.  But if duplication is likely to lead to a bug that negatively effects functionality in a significant way the future, refactor more aggressively.
+- **File Structure**: Maintain proper separation of concerns by file type. Python code belongs in `.py` files, CSS in `.css` files, JavaScript in `.js` files. Never embed large blocks of CSS or JavaScript as strings in Python or templates - import them instead.
+- **Function Size**: Functions can be longer if they represent a single, cohesive task. Prioritize clarity over line limits.
+
+## Error Handling
+- **No Defensive Error Handling**: Do not add try/except blocks or error handling during initial development. Let the application fail with full stack traces so bugs can be identified and fixed at their source. Error handling should only be added surgically in specific cases where graceful degradation is truly needed.
+
+## Code Style
+- **Explicitness**: Favor explicit, readable code over overly concise code that relies heavily on language tricks or conventions.
+- **Readability**: Prioritize readability over performance optimizations unless performance is explicitly a concern.
+- **Comments**: Use comments to explain *why* (intent and business logic), not *how* (implementation details should be self-evident from clear code).
+
+## Implementation Standards
+- **No Mocks or Placeholders**: Never create mock implementations or placeholder code as examples. If you cannot implement something properly, stop and ask what information or resources are needed to do it correctly. All code should be realistic.
+- **Dependencies**: Prefer adding well-maintained third-party libraries over writing complex functionality from scratch.  But never add a dependency without providing options and alternatives first for me to consider carefully.
+- **Design Patterns**: Use the simplest solution that works. Only apply formal design patterns when they meaningfully simplify the code.  I do not care about design patterns, I care about simple solutions and readable code.
+- **Paradigm**: Favor functional programming patterns where appropriate (pure functions, immutability for data transformations) wherever possible. In general, if state needs to be managed do so in a database like sqlite or postgres.  But if there's really strong reasons to, you can use object-oriented patterns when managing state or modeling entities.
+- **Data Structures**: Immutable data structures are preferred for data transformations, but mutable state is acceptable when managing application state or building up complex objects.
 
 # Neccesary Context
 
