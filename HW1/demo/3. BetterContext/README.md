@@ -1,10 +1,15 @@
-# Context Gathering
+# BetterContext Demo
 
-## How to run
+Reference implementation with full context and MCP server integration.
 
-1. Set up python
-2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
-3. `cd` into the app directory and run with `uv run fastapi dev`
+## Running the App
+
+```bash
+cd "HW1/demo/3. BetterContext/app"
+uv run fastapi dev
+```
+
+Then open http://localhost:8000 in your browser.
 
 ## Context Gathering
 

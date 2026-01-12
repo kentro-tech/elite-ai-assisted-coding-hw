@@ -4,9 +4,25 @@ We're building a SaaS app to help writers outline short stories using Orson Scot
 
 ## Quick Start
 
-1. Install Python 3.13+ and [uv](https://docs.astral.sh/uv/getting-started/installation/)
-2. Start with [HW1: Context-Driven Development](./HW1/ASSIGNMENT_OVERVIEW.md)
-3. See the reference implementation: `HW1/demo/3. BetterContext/`
+### Prerequisites
+- Python 3.13+
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) (fast Python package manager)
+
+### Running an App
+
+```bash
+cd HW1/demo/3.\ BetterContext/app
+uv run fastapi dev
+```
+
+Then open http://localhost:8000 in your browser.
+
+This works for any app directory - just `cd` into it and run `uv run fastapi dev`.
+
+### Getting Started
+1. Read [HW1: Context-Driven Development](./HW1/ASSIGNMENT_OVERVIEW.md)
+2. Try running the reference implementation above
+3. Start your own work in `HW1/incomplete/`
 
 ## Repository Structure
 
